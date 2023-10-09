@@ -24,12 +24,12 @@ Login -> menu utama (scroll ada daftar buku) -> beberapa fitur modul -> logout, 
 
 Fitur : like buku (mungkin ada perubahan), like review, rekomendasi buku, poin beli hadiah (mungkin ada perubahan), bisa baca buku link, ada permission admin sama permission user biasa (mungkin ada perubahan), navigation bar, dll.
 
-📕 Modul review buku yang mengimplementasikan review dari pembaca buku -> tabel order
-📕 Modul koleksi/kategori/favorit yang mengimplementasikan list of buku (client) -> nyimpen data, function nambahin data ke user, nambahin di profile
-📕 Modul homepage aplikasiin rekomendasi cth skripsi plg banyak di modul koleksi munculinnya di homepage ->
-📕 Modul profile berisi katalog review yang ditulis, dan kategori favorit
-📕 Modul Album Buku misalkan kurikulum IPS gitu -> implementasi di search bar
-📕 Modul leaderboard dari upvote dan downvote review
+<p>📕 Modul review buku yang mengimplementasikan review dari pembaca buku -> tabel order </p>
+<p>📕 Modul koleksi/kategori/favorit yang mengimplementasikan list of buku (client) -> nyimpen data, function nambahin data ke user, nambahin di profile </p>
+<p>📕 Modul homepage aplikasiin rekomendasi cth skripsi plg banyak di modul koleksi munculinnya di homepage -> </p>
+<p>📕 Modul profile berisi katalog review yang ditulis, dan kategori favorit </p>
+<p>📕 Modul Album Buku misalkan kurikulum IPS gitu -> implementasi di search bar </p>
+<p>📕 Modul leaderboard dari upvote dan downvote review </p>
 
 
 # 🌐Sumber Dataset Katalog Buku
