@@ -9,7 +9,7 @@
   <h3 align="center">📚Riviu Buku✨</h3>
 
   <p align="center">
-    Riviu Buku: Mengulas Buku Sesuka Hatimu!
+    Riviu Buku: Ulas Buku Untukmu
     <br />
     <a href="https://github.com/Riviu-Buku/riviu-buku"><strong>Explore the code »</strong> </a>
     <br />
@@ -42,7 +42,6 @@
 </details>
 
 <hr>
-<hr>
 
 <a name="anggota"></a>
 ## 🙋‍♀️ Anggota 🙋‍♂️
@@ -56,26 +55,24 @@
 <a name="cerita"></a>
 
 ## 📜 Cerita Aplikasi Yang Diajukan serta Manfaatnya 📜
-Seperti namanya, Riviu Buku adalah aplikasi untuk mereview buku. Riviu Buku cocok untuk para pencinta buku maupun orang-orang yang baru ingin mulai membaca buku. 
-Menghadirkan dunia literasi dalam genggamanmu, Riviu Buku menawarkan kesempatan untuk menunjukkan antusiasme pada buku pilihanmu😉.
+Seperti namanya, Riviu Buku adalah aplikasi untuk mereview buku. Riviu Buku cocok untuk kamu para pecinta buku maupun kamu yang baru ingin mulai membaca buku loh, yuk simak gambaran tentang Riviu Buku!😉. 
 
 Apa yang membedakan Riviu Buku dengan aplikasi lainnya?🤔Riviu Buku fokus pada interaksi dan kolaborasi antar pembaca. Pengguna dapat membuat ulasan buku serta menulis catatan atau komentar pribadi mengenai suatu buku. Ulasan tersebut dapat membantu pengguna lain dalam memilih buku yang sesuai dengan minat mereka sehingga diharapkan dapat menciptakan komunitas pembaca buku yang lebih aktif🤩. 
 
-Salah satu fitur menarik dari Riviu Buku adalah fitur untuk melihat rekomendasi buku dari pengguna lain sehingga kamu dapat bertemu dengan orang-orang yang minat bacanya serupa denganmu. Selain itu, kamu dapat membuat daftar bacaan pribadi, menandai buku sebagai "ingin dibaca", "sedang dibaca", atau "sudah selesai" sehingga fitur ini dapat membantu kamu dalam melacak perkembangan literasimu.
+Salah satu fitur menarik dari Riviu Buku adalah fitur untuk melihat rekomendasi buku dari pengguna lain sehingga kamu dapat bertemu dengan orang-orang yang minat bacanya serupa denganmu. Selain itu, kamu dapat membuat daftar bacaan pribadi, menandai buku sebagai "ingin dibaca", "sedang dibaca", atau "sudah selesai" sehingga fitur ini dapat membantu melacak perkembangan literasimu👌.
 
-Riviu Buku cocok untuk para pencinta buku maupun orang-orang yang baru ingin mulai membaca buku. 
-adalah tempat yang sempurna bagi semua pecinta buku untuk menjelajahi, berinteraksi, dan mendapatkan inspirasi baru dalam dunia literasi! Eksplorasi Dunia Buku Bersama Riviu Buku: Baca, Berbagi, Berinteraksi!
+Terima kasih telah membaca cerita Riviu Buku, selamat membaca dan mereview!😇📖⭐️
 
 <hr>
 <a name="daftar-modul"></a>
 
 ## 📃 Daftar Modul Yang Akan Diimplementasikan 📃
 
-<p>📕 Modul untuk me-review buku yang oleh pengguna yang disertai oleh leaderboard berdasarkan review terbaik menggunakan fitur upvote dan downvote;</p>
-<p>📕 Modul koleksi, kategori, dan favorit yang memungkinkan pengguna untuk menyimpan daftar buku favorit dan fungsi untuk menambahkan buku ke album/wishlist pengguna;</p>
-<p>📕 Modul homepage yang menyajikan rekomendasi berdasarkan jumlah likes pada suatu kategori buku oleh pengguna;</p>
-<p>📕 Modul wishlist pada profil pengguna yang berisi katalog ulasan yang telah ditulis oleh pengguna, dan kategori buku favorit;</p>
-<p>📕 Modul Album Buku dimana pengguna bisa mengumpulkan berbagai buku ke dalam suatu folder contohnya buku a,b, dan c yang mencakup kurikulum IPS, serta dengan implementasinya di dalam kotak pencarian homepage.</p>
+- 📕 Modul untuk me-review buku yang oleh pengguna yang disertai oleh leaderboard berdasarkan review terbaik menggunakan fitur upvote dan downvote;</p>
+- 📕 Modul koleksi, kategori, dan favorit yang memungkinkan pengguna untuk menyimpan daftar buku favorit dan fungsi untuk menambahkan buku ke album/wishlist pengguna;</p>
+- 📕 Modul homepage yang menyajikan rekomendasi berdasarkan jumlah likes pada suatu kategori buku oleh pengguna;</p>
+- 📕 Modul wishlist pada profil pengguna yang berisi katalog ulasan yang telah ditulis oleh pengguna, dan kategori buku favorit;</p>
+- 📕 Modul Album Buku dimana pengguna bisa mengumpulkan berbagai buku ke dalam suatu folder contohnya buku a,b, dan c yang mencakup kurikulum IPS, serta dengan implementasinya di dalam kotak pencarian homepage.</p>
 
 <p></p>
 
