@@ -71,10 +71,10 @@ adalah tempat yang sempurna bagi semua pecinta buku untuk menjelajahi, berintera
 
 ## 📃 Daftar Modul Yang Akan Diimplementasikan 📃
 
-<p>📕 Modul untuk me-review buku yang oleh pengguna;</p>
+<p>📕 Modul untuk me-review buku yang oleh pengguna yang disertai oleh leaderboard berdasarkan review terbaik menggunakan fitur upvote dan downvote;</p>
 <p>📕 Modul koleksi, kategori, dan favorit yang memungkinkan pengguna untuk menyimpan daftar buku favorit dan fungsi untuk menambahkan buku ke album/wishlist pengguna;</p>
 <p>📕 Modul homepage yang menyajikan rekomendasi berdasarkan jumlah likes pada suatu kategori buku oleh pengguna;</p>
-<p>📕 Modul wishlist pada profil pengguna yang berisi katalog ulasan yang telah ditulis oleh pengguna, dan kategori buku favorit.</p>
+<p>📕 Modul wishlist pada profil pengguna yang berisi katalog ulasan yang telah ditulis oleh pengguna, dan kategori buku favorit;</p>
 <p>📕 Modul Album Buku dimana pengguna bisa mengumpulkan berbagai buku ke dalam suatu folder contohnya buku a,b, dan c yang mencakup kurikulum IPS, serta dengan implementasinya di dalam kotak pencarian homepage.</p>
 
 <p></p>
