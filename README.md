@@ -1,5 +1,50 @@
-<h1 align="center"> 📚Riviu Buku✨ </h1>
+<a name="readme-top"></a>
 
+<br />
+<div align="center">
+  <a href="http://samuel-taniel-tutorial.pbp.cs.ui.ac.id">
+    <img src="https://github.com/Riviu-Buku/riviu-buku/blob/main/logo.png" alt="Logo Riviu Buku" width="80" height="80">
+  </a>
+
+  <h3 align="center">📚Riviu Buku✨</h3>
+
+  <p align="center">
+    Riviu Buku: Mengulas Buku Sesuka Hatimu!
+    <br />
+    <a href="https://github.com/Riviu-Buku/riviu-buku"><strong>Explore the code »</strong> </a>
+    <br />
+    <br />
+    <a href="http://samuel-taniel-tutorial.pbp.cs.ui.ac.id">View Site</a>
+    ·
+    <a href="https://pbp-fasilkom-ui.github.io/ganjil-2024/assignments/group/midterm"> View Assignment </a>
+  </p>
+</div>
+
+<details>
+  <summary>Daftar Pustaka</summary>
+  <ol>
+    <li>
+      <a href="#anggota">🙋‍♀️ Anggota 🙋‍♂️</a>
+    </li>
+    <li>
+      <a href="#cerita">📜 Cerita Aplikasi Yang Diajukan serta Manfaatnya 📜</a>
+    </li>
+    <li>
+      <a href="#daftar-modul">📃 Daftar Modul Yang Akan Diimplementasikan 📃</a>
+    </li>
+    <li>
+      <a href="#dataset">🌐 Sumber Dataset Katalog Buku 🌐</a>
+    </li>
+    <li>
+      <a href="#role">🧑‍🦳 Role atau Peran Pengguna Beserta Deskripsinya 🧑‍🦳</a>
+    </li>
+  </ol>
+</details>
+
+<hr>
+<hr>
+
+<a name="anggota"></a>
 ## 🙋‍♀️ Anggota 🙋‍♂️
 - 🐥 Emmanuel Patrick - 2206081420
 - 🐥 Khansa Mahira - 2206819413
@@ -7,36 +52,47 @@
 - 🐥 Samuel Taniel Mulyadi - 2206081805
 - 🐥 Syazantri Salsabila - 2206029443
 
+<hr>
+<a name="cerita"></a>
+
 ## 📜 Cerita Aplikasi Yang Diajukan serta Manfaatnya 📜
-Riviu Buku adalah aplikasi untuk mereview buku dari koleksi buku yang tersedia. Menghadirkan dunia literasi dalam genggaman Anda, Riviu Buku menawarkan kesempatan yang luas untuk menunjukkan antusiasmenya pada buku pilihan Anda!
+Seperti namanya, Riviu Buku adalah aplikasi untuk mereview buku. Riviu Buku cocok untuk para pencinta buku maupun orang-orang yang baru ingin mulai membaca buku. 
+Menghadirkan dunia literasi dalam genggamanmu, Riviu Buku menawarkan kesempatan untuk menunjukkan antusiasme pada buku pilihanmu😉.
 
-Apa yang membedakan Riviu Buku adalah fokusnya pada interaksi dan kolaborasi antarpara pembaca. Pengguna dapat membuat ulasan buku, memberikan peringkat, serta menulis catatan atau komentar pribadi tentang buku yang mereka baca. Ini memberikan wawasan yang berharga kepada komunitas pembaca lainnya dan membantu orang lain memilih buku yang sesuai dengan minat mereka. Sehingga pengguna dapat menemukan pengguna lainnya yang memiliki preferensi buku yang sama dan dapat berbagi buku yang terkait menciptakan komunitas pembaca yang aktif!
+Apa yang membedakan Riviu Buku dengan aplikasi lainnya?🤔Riviu Buku fokus pada interaksi dan kolaborasi antar pembaca. Pengguna dapat membuat ulasan buku serta menulis catatan atau komentar pribadi mengenai suatu buku. Ulasan tersebut dapat membantu pengguna lain dalam memilih buku yang sesuai dengan minat mereka sehingga diharapkan dapat menciptakan komunitas pembaca buku yang lebih aktif🤩. 
 
-Salah satu fitur menarik dari Riviu Buku adalah kemampuannya untuk mengikuti pengguna lain dan melihat rekomendasi buku mereka. Anda dapat mengikuti orang-orang dengan minat bacaan serupa dan mendapatkan saran buku yang relevan. Selain itu, Anda dapat membuat daftar bacaan pribadi, menandai buku sebagai "ingin dibaca," "sedang dibaca," atau "sudah selesai," sehingga Anda dapat melacak perkembangan literasi Anda.
+Salah satu fitur menarik dari Riviu Buku adalah fitur untuk melihat rekomendasi buku dari pengguna lain sehingga kamu dapat bertemu dengan orang-orang yang minat bacanya serupa denganmu. Selain itu, kamu dapat membuat daftar bacaan pribadi, menandai buku sebagai "ingin dibaca", "sedang dibaca", atau "sudah selesai" sehingga fitur ini dapat membantu kamu dalam melacak perkembangan literasimu.
 
-Riviu Buku adalah tempat yang sempurna bagi semua pecinta buku untuk menjelajahi, berinteraksi, dan mendapatkan inspirasi baru dalam dunia literasi! Eksplorasi Dunia Buku Bersama Riviu: Baca, Berbagi, Berinteraksi!
+Riviu Buku cocok untuk para pencinta buku maupun orang-orang yang baru ingin mulai membaca buku. 
+adalah tempat yang sempurna bagi semua pecinta buku untuk menjelajahi, berinteraksi, dan mendapatkan inspirasi baru dalam dunia literasi! Eksplorasi Dunia Buku Bersama Riviu Buku: Baca, Berbagi, Berinteraksi!
 
+<hr>
+<a name="daftar-modul"></a>
 
 ## 📃 Daftar Modul Yang Akan Diimplementasikan 📃
 
-flow
-Login -> menu utama (scroll ada daftar buku) -> beberapa fitur modul -> logout, CSS, logo Riviu Buku (kalau ada waktu),  
+<p>📕 Modul untuk me-review buku yang oleh pengguna;</p>
+<p>📕 Modul koleksi, kategori, dan favorit yang memungkinkan pengguna untuk menyimpan daftar buku favorit dan fungsi untuk menambahkan buku ke album/wishlist pengguna;</p>
+<p>📕 Modul homepage yang menyajikan rekomendasi berdasarkan jumlah likes pada suatu kategori buku oleh pengguna;</p>
+<p>📕 Modul wishlist pada profil pengguna yang berisi katalog ulasan yang telah ditulis oleh pengguna, dan kategori buku favorit.</p>
+<p>📕 Modul Album Buku dimana pengguna bisa mengumpulkan berbagai buku ke dalam suatu folder contohnya buku a,b, dan c yang mencakup kurikulum IPS, serta dengan implementasinya di dalam kotak pencarian homepage.</p>
+<p>📕 Modul leaderboard yang menampilkan peringkat berdasarkan upvote dan downvote pada ulasan.</p>
 
-Fitur : like buku (mungkin ada perubahan), like review, rekomendasi buku, poin beli hadiah (mungkin ada perubahan), bisa baca buku link, ada permission admin sama permission user biasa (mungkin ada perubahan), navigation bar, dll.
+<p></p>
 
-<p>📕 Modul review buku yang mengimplementasikan review dari pembaca buku -> tabel order </p>
-<p>📕 Modul koleksi/kategori/favorit yang mengimplementasikan list of buku (client) -> nyimpen data, function nambahin data ke user, nambahin di profile </p>
-<p>📕 Modul homepage aplikasiin rekomendasi cth skripsi plg banyak di modul koleksi munculinnya di homepage -> </p>
-<p>📕 Modul profile berisi katalog review yang ditulis, dan kategori favorit </p>
-<p>📕 Modul Album Buku misalkan kurikulum IPS gitu -> implementasi di search bar </p>
-<p>📕 Modul leaderboard dari upvote dan downvote review </p>
-
+<hr>
+<a name="dataset"></a>
 
 ## 🌐 Sumber Dataset Katalog Buku 🌐
 Google Books API: https://developers.google.com/books/ karena sesuai dengan modul-modul yang ingin kita implementasikan serta tambahan aplikasi Riviu dimana bisa memberikan ulasan dan menciptakan komunitas.
 
 Referensi: https://stackoverflow.com/questions/60318452/how-to-post-data-from-google-books-api-to-your-book-model-using-django
 
+<hr>
+<a name="role"></a>
+
 ## 🧑‍🦳 Role atau Peran Pengguna Beserta Deskripsinya 🧑‍🦳
 Pengguna aplikasi hanya ada satu jenis, semua pengguna berkedudukan sama, yaitu dapat mengakses semua buku yang ada, melihat dan membuat review buku dan juga membuat album buku yang bisa dioptimalkan sesuai preferensi pengguna.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
