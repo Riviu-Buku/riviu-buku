@@ -100,7 +100,6 @@ celerybeat-schedule.*
 .env 
 .venv 
 env/ 
-riviu_buku/env/
 venv/ 
 ENV/ 
 env.bak/ 
