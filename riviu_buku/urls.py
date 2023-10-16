@@ -22,4 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('login_register.urls')),
     path('home/', include('homepage.urls')),
+    path('book-detail/', include('review.urls')),
+    path('profile/', include('myprofile.urls')),
+    path('album/', include('album.urls')),
+    path('upload/', include('upload_buku.urls')),
 ]
