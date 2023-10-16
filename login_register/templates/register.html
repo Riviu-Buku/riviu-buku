@@ -1,0 +1,71 @@
+{% extends 'base.html' %} 
+
+{% block meta %}
+<title>Registrasi User</title>
+{% endblock meta %} 
+
+{% block content %}
+<head>
+	<script>
+		$(document).ready(function () {
+			document.getElementById("navbar").remove();
+			$("footer").remove();
+		});
+	</script>
+</head>
+
+<div class="w-screen h-screen flex justify-center items-center bg-ungu-muda">
+	<div class="register w-[40rem] drop-shadow-2xl flex flex-col justify-center items-center bg-putih p-5 rounded-xl lg:scale-100 md:scale-90 scale-75">
+		<h1 class="text-2xl font-bold mb-4">REGISTER</h1>
+		<form method="POST">
+			{% csrf_token %}
+			<div>
+				<div class="font-bold" >
+					<label for="id_username">Username</label>
+				</div>
+				<div>
+					<input type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id = "id_username" class="form-control text-sm rounded-lg p-2 w-full">
+				</div>
+				<div class="mt-2 font-bold">
+					<label for="id_password1">Password</label>
+				</div>
+				<div>
+					<input type="password" name="password1" autocomplete="new-password" required id = "id_password1" class="form-control text-sm rounded-lg p-2 w-full">
+				</div>
+				<div class="mt-2 font-bold">
+					<label for="id_password2">Confirm Password</label>
+				</div>
+				<div>
+					<input type="password" name="password2" autocomplete="new-password" required id = "id_password2" class="form-control text-sm rounded-lg p-2 w-full">
+				</div>
+	
+
+				{% if form.username.errors %}  
+				<div class="text-sm text-rose-900 mt-1">
+					{{ form.username.errors }}
+				</div> 
+				{% endif %}
+				{% if form.password1.errors %}  
+				<div class="text-sm text-rose-900 mt-1">
+					{{ form.password1.errors }}
+				</div> 
+				{% endif %}
+				{% if form.password2.errors %}  
+				<div class="text-sm text-rose-900 mt-1">
+					{{ form.password2.errors }}
+				</div> 
+				{% endif %}
+
+				<div class="flex justify-center items-center">
+					<input class="btn login_btn mt-4 p-2 bg-ungu-muda rounded-lg h-10 w-full text-black hover:bg-ungu-tua"  type="submit" name="submit" value="Daftar"/>
+				</div>
+				<div class="mt-4">
+					<span class="text-black">
+						Sudah mempunyai akun? <a href="{% url 'login_register:login_user' %}" class="underline font-bold">Log in</a>
+					</span>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock content %}

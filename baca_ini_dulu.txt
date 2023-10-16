@@ -1,0 +1,5 @@
+Step buat mulai kerjain:
+1. clone repo
+2. masuk ke vscode, atau apapun code editor lu
+3. ke terminal, trs jalanin: 'git checkout -b feat/[nama modul lu]'
+4. Konfigurasi tailwind dgn cara: 'npm install tailwindcss'
