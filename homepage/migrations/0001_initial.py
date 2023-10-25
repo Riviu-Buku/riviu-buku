@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('author', models.TextField(blank=True, null=True)),
                 ('description', models.TextField(blank=True, null=True)),
                 ('rating', models.FloatField(blank=True, null=True)),
-                ('price', models.IntegerField(blank=True, null=True)),
+                ('price', models.FloatField(blank=True, null=True)),
                 ('language', models.CharField(blank=True, max_length=100, null=True)),
                 ('genres', models.JSONField(blank=True, null=True)),
                 ('characters', models.JSONField(blank=True, null=True)),

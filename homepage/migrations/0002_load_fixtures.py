@@ -6,7 +6,11 @@ import os
 
 
 def load_my_initial_data(apps, schema_editor):
-    call_command("loaddata", "homepage\\fixtures\\riviu_buku_books.json", database=schema_editor.connection.alias)
+    #   # Replace this path with the correct path to your fixture file.
+    # fixture_path = 'homepage\\fixtures\\riviu_buku_books.json'
+    # # Use subprocess to run the loaddata command.
+    # subprocess.call(['python', 'manage.py', 'loaddata', fixture_path])
+    call_command("loaddata", "riviu_buku_books.json", database=schema_editor.connection.alias)
 
 class Migration(migrations.Migration):
 
