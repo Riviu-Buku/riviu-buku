@@ -1,0 +1,17 @@
+Itu udah bisa di klik imagenya gess tinggal diatur supaya mirip pinterest/yang diigninkan jgn otak atik selain inner htmlnya ya kecuali kalau kalian tahu apa fungsinyaa tengk oyuuu
+
+    {% for book in books %}
+    <img src={{book.coverImg}}
+        alt="{{book.title}}"
+        width="100"
+        height="150"/>
+    {% endfor %}
+
+    class="hover:text-cream-muda hover:text-lg duration-500"
+
+    const clickableImages = document.querySelectorAll('.clickable-image');
+        clickableImages.forEach((image) => { //how to remove this so that i can only give the link to the current clickable image so its unique?
+          image.addEventListener('click', function() {
+            window.location.href = reviewUrl; // Use the stored URL
+          });
+        });

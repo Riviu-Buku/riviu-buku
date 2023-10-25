@@ -87,6 +87,12 @@ DATABASES = {
     }
 }
 
+DATE_INPUT_FORMATS = [
+    '%m/%d/%y',  # Add 'MM/DD/YY' as a custom format
+    '%Y-%m-%d',  # Default format
+    # Add other default formats as needed
+]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
