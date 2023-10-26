@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>
+    Album
+</title>
+{% endblock meta %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Lists</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-5">
+        <section class="mb-10 text-center">
+    <h2 class="text-2xl font-bold mb-4">Albums: Your Personal Book Collections</h2>
+    <p class="text-lg">Gather, organize, and share. Albums are an ideal way to group books.</p>
+    <a href="{% url 'album:create_album' %}" class="mt-4 inline-block bg-purple-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Create an Album</a>
+</section>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for list in lists %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <img class="w-full h-64 object-cover" src="{{ list.movies.first.coverImg }}" alt="{{ list.title }}">
+                <div class="p-4">
+                    <h2 class="text-xl font-bold">{{ list.title }}</h2>
+                    <a href="{% url 'album:view_list' list.slug %}" class="mt-2 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">View List</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+{% endblock content %}

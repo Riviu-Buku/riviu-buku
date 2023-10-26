@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a new album</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+
+
+    <div class="container mx-auto px-4 py-5">
+        <h1 class="text-3xl font-bold mb-5">Create a new album</h1>
+        <form method="post" class="bg-white rounded shadow-lg p-4 mb-4">
+    {% csrf_token %}
+    <div class="mb-4">
+        <label for="{{ form.name.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+        <input id="{{ form.name.id_for_label }}" type="text" name="{{ form.name.html_name }}" value="{{ form.name.value|default:'' }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label for="{{ form.description.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+        <textarea id="{{ form.description.id_for_label }}" name="{{ form.description.html_name }}" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ form.description.value|default:'' }}</textarea>
+    </div>
+    <button type="submit" class="mt-2 inline-block bg-purple-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Create</button>
+</form>
+        <div id="albumBooks">
+            <h2 class="text-2xl font-bold mb-4">Current Books:</h2>
+</div>
+        <h2 class="text-2xl font-bold mb-4">Add books to your album</h2>
+        <input type="text" id="bookSearch" onkeyup="searchBooks()" placeholder="Search for books" class="w-full mb-4 p-2 border rounded">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="grid">
+        {% for book in books %}
+             <div class="bg-white rounded-lg shadow-md">
+    <img src="{{ book.coverImg }}" alt="{{ book.title }}" class="h-128 w-full rounded-t-lg object-cover">
+        <div id="book-{{ book.id }}" class="book bg-white rounded shadow-lg p-4 mb-4 flex justify-between items-center">
+            <h3 class="text-xl title">{{ book.title }}</h3>
+            <button onclick="addToAlbum({{ book.id }})" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded add-to-album-button">Add to album</button>
+        </div>
+                 </div>
+        {% endfor %}
+    </div>
+        </div>
+<script>
+var selectedBooks = [];
+function addToAlbum(bookId) {
+    // Get the book element
+    var bookElement = document.getElementById('book-' + bookId);
+
+    // Clone the book element
+    var clone = bookElement.cloneNode(true);
+
+    // Remove the "Add to album" button from the cloned element
+    var btn = clone.getElementsByClassName('add-to-album-button')[0];
+    clone.removeChild(btn);
+
+    // Add the cloned element to the album
+    document.getElementById('albumBooks').appendChild(clone);
+
+    selectedBooks.push(bookId);
+    }
+
+async function refreshProducts() {
+    const productsContainer = document.getElementById("grid");
+    productsContainer.innerHTML = ""; // Clear the existing content
+
+    const products = await getProducts();
+
+    products.forEach((product) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("col");
+
+        cardDiv.innerHTML = `
+            <div class="card" style="width: 18rem;">
+                <h5 class="card-header text-white" style="background-color: #455945;">${product.fields.name}</h5>
+                <div class="card-body" style="background-color: #9cc99c;">
+                    <h6 class="card-subtitle mb-2 text-white text-body-secondary">Price: ${product.fields.price} Amount: ${product.fields.amount}</h6>
+                    <p class="card-text text-white">${product.fields.description}</p>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="/increment/${product.pk}" class="btn btn-secondary" style="background-color: #577057;">+</a>
+                        <a href="/decrement/${product.pk}" class="btn btn-secondary" style="background-color: #577057;">-</a>
+                        <a  onclick="deleteProduct(${product.pk})" class="btn btn-secondary" style="background-color: #577057;">Delete</a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        productsContainer.appendChild(cardDiv);
+    });
+}
+
+function searchBooks() {
+    console.log("searchBooks function called");
+    // Get the search query
+    var query = document.getElementById('bookSearch').value.toUpperCase();
+
+    // Get all book elements
+    var books = document.getElementsByClassName('book');
+    console.log("searchBooks function called 2");
+
+    // Loop through all books and hide those that don't match the query
+    for (var i = 0; i < books.length; i++) {
+        var title = books[i].getElementsByClassName('title')[0];
+        console.log("looping");
+        if (title) {
+            var text = title.innerText || title.textContent;
+            books[i].style.display = text.toUpperCase().indexOf(query) > -1 ? '' : 'none';
+            }
+        }
+    }
+</script>
+{% endblock content %}
