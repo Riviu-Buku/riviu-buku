@@ -61,6 +61,7 @@
 
 {% block content %}
 <body>
+  {% load static %}
   <div class="image-container">
     <img id = "banner" src="{{ books.coverImg }}" alt="{{ books.title }}">
     <div class="overlay"></div>
@@ -88,24 +89,56 @@
     </div>
   </div>
   <div id="review-container">
-    <div id="submit_review_form"></div>
-      <div id="book-details" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
-      md:items-center md:justify-between">
-          <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1625673662l/57147096.jpg" width="300" height="450" class="rounded-md">        
-          <h1>Sousou no frieren</h1>
+    <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
+        md:items-center md:justify-between">
+      <div id="user_identity" class="bg-cream-tua">
+        <p>test</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+        
       </div>
-
-      <div id="book_cards" style="color: lightgray; margin-left: 30px; margin-right: 30px; background-color: black; width: 95%; border-radius: 25px;"></div>  
+    </div>
     <div id="list_review"></div>
-    <p>test</p>
-    <p>test</p>
-    <p>test</p>
-    <p>test</p>
-    <p>test</p>
-    <p>test</p>
+
   </div>
   <div id="book_cards"></div>            
 </div>
+
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Add Reviews</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="form" onsubmit="return false;">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                    <label for="Stars" class="col-form-label">Stars:</label>
+                    <textarea class="form-control" id="stars" name="stars"></textarea>
+                  </div>
+                  <div class="mb-3">
+                      <label for="description" class="col-form-label">Description:</label>
+                      <textarea class="form-control" id="description" name="description"></textarea>
+                  </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Review</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
 </body>
 
 <script>
@@ -113,12 +146,69 @@
         return fetch(`{% url 'homepage:get_books_by_id' books.id %}`).then((res) => res.json())
     }
 
-    async function refreshBooks() {
-        document.getElementById("book_cards").innerHTML = ""
-        const products = await getBooks()
+    async function getReviews() {
+        return fetch(`{% url 'review:get_review_json' books.id %}`).then((res) => res.json())
+    }
+
+    async function getReviewsUser() {
+        return fetch(`{% url 'review:get_review_by_user_json' books.id %}`).then((res) => res.json())
+    }
+
+    async function refreshReviews() {
+        document.getElementById("list_review").innerHTML = ""
+        const reviews = await getReviews()
+        const reviewsUser = await getReviewsUser()
+        var login_info = {
+          user: "{{ request.user.id }}",  
+        };
 
         let htmlString = ``
-        products.forEach((item) => {{
+        reviewsUser.forEach((item) => {{
+            htmlString += `
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
+        md:items-center md:justify-between flex">
+              <p>${item.fields.user.name} ${item.fields.description}</p>
+              <img src="{% static 'images/bx_upvote_false.png' %}">
+              <img src="{% static 'images/bx_downvote_false.png' %}">
+            </div>
+            `;
+          }
+        }); 
+
+        reviews.forEach((item) => {
+          if (!(item.fields.user == login_info.user)){
+            htmlString += `
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
+        md:items-center md:justify-between flex">
+              <p>${item.fields.user.name} ${item.fields.description}</p>
+              <img src="{% static 'images/bx_upvote_false.png' %}">
+              <img src="{% static 'images/bx_downvote_false.png' %}">
+            </div>
+            `;
+          }
+        }); 
+     
+        document.getElementById("list_review").innerHTML = htmlString
+    }
+
+    function addReview() {
+        fetch("{% url 'review:add_review_ajax' books.id %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshReviews)
+
+        document.getElementById("form").reset()
+        return false
+    }
+
+    document.getElementById("button_add").onclick = addReview
+
+    async function refreshBooks() {
+        document.getElementById("book_cards").innerHTML = ""
+        const books = await getBooks()
+
+        let htmlString = ``
+        books.forEach((item) => {{
             htmlString += ``;
           }
         }); 
@@ -128,11 +218,11 @@
     
     async function createGenre() {
       document.getElementById("genreList").innerHTML = "";
-      const products = await getBooks();
+      const books = await getBooks();
 
       let htmlString = "";
 
-      products.forEach((item) => {
+      books.forEach((item) => {
         var genres = item.fields.genres;
         var cleanedGenres = genres.replace(/^\[|\]$/g, ''); 
         var cleanedGenresArray = cleanedGenres.split(', ').map(genre => genre.replace(/'/g, ''));
@@ -161,11 +251,11 @@
         }
       });
       document.getElementById("characters_text").innerHTML = "";
-      const products = await getBooks();
+      const books = await getBooks();
 
       let htmlString = "";
 
-      products.forEach((item) => {
+      books.forEach((item) => {
         var genres = item.fields.characters;
         var cleanedGenres = genres.replace(/^\[|\]$/g, ''); 
         var cleanedGenresArray = cleanedGenres.split(', ').map(genre => genre.replace(/'/g, ''));
@@ -180,10 +270,10 @@
     
     async function createStars() {
         document.getElementById("stars_rating").innerHTML = ""
-        const products = await getBooks()
+        const books = await getBooks()
 
         let htmlString = ``
-        products.forEach((item) => {{
+        books.forEach((item) => {{
             var yellow_stars = Math.ceil(item.fields.rating)
             var gray_stars = 5 - yellow_stars
             for (let i = 0; i < yellow_stars; i++) {
@@ -205,6 +295,7 @@
         document.getElementById("stars_rating").innerHTML = htmlString
     }
 
+    refreshReviews()
     createCharacters()
     createStars();
     refreshBooks();
