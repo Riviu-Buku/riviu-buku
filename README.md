@@ -80,9 +80,9 @@ Terima kasih telah membaca cerita Riviu Buku, selamat membaca dan mereview!😇�
 <a name="dataset"></a>
 
 ## 🌐 Sumber Dataset Katalog Buku 🌐
-Google Books API: https://developers.google.com/books/ karena sesuai dengan modul-modul yang ingin kita implementasikan serta tambahan aplikasi Riviu dimana bisa memberikan ulasan dan menciptakan komunitas.
+Kaggle Dataset: https://www.kaggle.com/datasets/thedevastator/comprehensive-overview-of-52478-goodreads-best-b karena sesuai dengan modul-modul yang ingin kita implementasikan serta tambahan aplikasi Riviu dimana bisa memberikan ulasan dan menciptakan komunitas.
 
-Referensi: https://stackoverflow.com/questions/60318452/how-to-post-data-from-google-books-api-to-your-book-model-using-django
+Referensi: Docs Asisten Dosen
 
 <hr>
 <a name="role"></a>
