@@ -1,4 +1,5 @@
 from django.db import models
+from review.models import Review
 
 # Create your models here.
 
@@ -20,6 +21,7 @@ class Book(models.Model):
     numRatings = models.IntegerField(null=True, blank=True)
     numLikes = models.IntegerField(null=True, blank=True)
     coverImg = models.URLField(null=True, blank=True)
+    review = models.ManyToManyField(Review)
 
     def __str__(self):
         return self.title

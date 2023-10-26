@@ -2,7 +2,6 @@
 
 from django.db import migrations
 from django.core.management import call_command
-import os
 
 
 def load_my_initial_data(apps, schema_editor):
