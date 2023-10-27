@@ -1,35 +1,37 @@
 {% extends 'base.html' %}
 
-{% block meta %}
-<title>
-    Album
-</title>
-{% endblock meta %}
-
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Letterboxd Clone</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <!-- Movie Card -->
-            <div class="bg-white rounded overflow-hidden shadow-lg">
-                <img class="w-full" src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1586722975l/2767052.jpg" alt="The Hunger Games">
-                <div class="px-6 py-4">
-                    <div class="font-bold text-xl mb-2">The Hunger Games</div>
-                    <p class="text-gray-700 text-base">Rating: 4.33</p>
-                </div>
-            </div>
-            <!-- Add more movie cards as needed -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ album.name }}</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+
+<div class="container mx-auto px-4 py-5">
+    <h1 class="text-3xl font-bold mb-5">{{ album.name }}</h1>
+    <div class="bg-white rounded shadow-lg p-4 mb-4">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+            <p class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ album.name }}</p>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+            <p class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ album.description }}</p>
         </div>
     </div>
-</body>
-</html>
+    <div id="albumBooks">
+        <h2 class="text-2xl font-bold mb-4">Books:</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="grid">
+            {% for book in album.books.all %}
+                <div class="bg-white rounded-lg shadow-md">
+                    <img src="{{ book.coverImg }}" alt="{{ book.title }}" class="h-128 w-full rounded-t-lg object-cover">
+                    <div id="book-{{ book.id }}" class="book bg-white rounded shadow-lg p-4 mb-4 flex justify-between items-center" data-title="{{ book.title|escapejs }}">
+                        <h3 class="text-xl title">{{ book.title }}</h3>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
 {% endblock content %}

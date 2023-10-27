@@ -10,18 +10,19 @@
 
     <div class="container mx-auto px-4 py-5">
         <h1 class="text-3xl font-bold mb-5">Create a new album</h1>
-        <form method="post" class="bg-white rounded shadow-lg p-4 mb-4">
+        <form action="{% url 'album:create_album' %}" method="post">
     {% csrf_token %}
     <div class="mb-4">
-        <label for="{{ form.name.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
-        <input id="{{ form.name.id_for_label }}" type="text" name="{{ form.name.html_name }}" value="{{ form.name.value|default:'' }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+        <input id="name" type="text" name="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
     </div>
     <div class="mb-4">
-        <label for="{{ form.description.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-        <textarea id="{{ form.description.id_for_label }}" name="{{ form.description.html_name }}" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ form.description.value|default:'' }}</textarea>
+        <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+        <textarea id="description" name="description" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
     </div>
     <button type="submit" class="mt-2 inline-block bg-purple-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Create</button>
 </form>
+
         <div id="albumBooks">
             <h2 class="text-2xl font-bold mb-4">Current Books:</h2>
 </div>
@@ -48,36 +49,17 @@ function addToAlbum(bookId) {
     document.getElementById('albumBooks').appendChild(clone);
 
     selectedBooks.push(bookId);
+
+    // Create a new hidden input element for this book
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'books';
+    input.value = bookId;
+
+    // Add the hidden input element to the form
+    var form = document.querySelector('form');
+    form.appendChild(input);
     }
-
-async function refreshProducts() {
-    const booksContainer = document.getElementById("grid");
-    booksContainer.innerHTML = ""; // Clear the existing content
-
-    const books = await getProducts();
-
-    products.forEach((product) => {
-        const cardDiv = document.createElement("div");
-        cardDiv.classList.add("col");
-
-        cardDiv.innerHTML = `
-            <div class="card" style="width: 18rem;">
-                <h5 class="card-header text-white" style="background-color: #455945;">${product.fields.name}</h5>
-                <div class="card-body" style="background-color: #9cc99c;">
-                    <h6 class="card-subtitle mb-2 text-white text-body-secondary">Price: ${product.fields.price} Amount: ${product.fields.amount}</h6>
-                    <p class="card-text text-white">${product.fields.description}</p>
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="/increment/${product.pk}" class="btn btn-secondary" style="background-color: #577057;">+</a>
-                        <a href="/decrement/${product.pk}" class="btn btn-secondary" style="background-color: #577057;">-</a>
-                        <a  onclick="deleteProduct(${product.pk})" class="btn btn-secondary" style="background-color: #577057;">Delete</a>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        productsContainer.appendChild(cardDiv);
-    });
-}
 
 function searchBooks() {
     // Get the search query

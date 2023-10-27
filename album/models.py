@@ -15,5 +15,12 @@ class Album(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            original_slug = slugify(self.name)
+            unique_slug = original_slug
+            num = 1
+            while Album.objects.filter(slug=unique_slug).exists():
+                unique_slug = '{}-{}'.format(original_slug, num)
+                num += 1
+            self.slug = unique_slug
+
         super().save(*args, **kwargs)
