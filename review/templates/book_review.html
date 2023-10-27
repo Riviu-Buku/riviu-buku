@@ -88,9 +88,9 @@
     </div>
   </div>
   <div id="review-container">
-    <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-ungu-muda rounded-md shadow-2xl md:flex md:items-center md:justify-between items-center text-center self-center">
+    <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-ungu-tua rounded-md shadow-2xl md:flex md:items-center md:justify-between items-center text-center self-center">
       <div id="user_identity" class="flex flex-col items-center md:flex-row">
-          <h1 class="font-medium text-center text-3xl text-white">Add your review by clicking here the button!</h1>
+          <h1 class="font-medium text-center text-3xl text-white">Add your review by clicking the button!</h1>
           <button type="button" class="btn btn-primary ml-5 bg-cream-muda text-black rounded-lg hover:bg-cream-tua px-5 text-2xl font-medium text-center" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
       </div>
     </div>
@@ -187,16 +187,36 @@
           user: "{{ request.user }}", 
           user_id : "{{ request.user.id }}" 
         };
-
+        
         let htmlString = ``
+        reviewsUser.sort((a, b) => (b.fields.upvote - b.fields.downvote) - (a.fields.upvote - a.fields.downvote));
         reviewsUser.forEach((item) => {{
+            var yellow_stars = Math.ceil(item.fields.stars)
+            var gray_stars = 5 - yellow_stars
+            
+
             htmlString += `
-            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between">
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between hover:bg-cream-tua">
               <div class="flex">
                 <div class = "flex">
                   <p>${login_info.user} </p>
-                  <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added}</p>
-                </div>
+                  <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added} |&nbsp;</p>`;
+                  for (let i = 0; i < yellow_stars; i++) {
+                    htmlString += `
+                    <svg class="w-6 h-6 text-yellow mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                    </svg>`; // You can use any star character or image you prefer
+                  }
+
+                  for (let i = 0; i < gray_stars; i++) {
+                    htmlString += `
+                    <svg class="w-6 h-6 text-gray mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                    </svg>`;
+                  }
+            htmlString += `
+            </div>
+              <br><br><hr>
                 <div class="ml-auto flex">
                   <a href="javascript:void(0)" id="upvote-${item.pk}" onclick="upvoteFunction(${item.pk}, false)">
                     <img id="upvote-img-${item.pk}" src="{% static 'images/bx_upvote_false.png' %}">  
@@ -214,21 +234,37 @@
           }
         }); 
 
+        reviews.sort((a, b) => (b.fields.upvote - b.fields.downvote) - (a.fields.upvote - a.fields.downvote));
         reviews.forEach((item) => {
           if (!(item.fields.user == login_info.user_id)){
             htmlString += `
-            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between">
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between hover:bg-cream-tua">
               <div class="flex">
                 <div class = "flex">
                   <p>${item.fields.name}</p>
-                  <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added}</p>
-                </div>
+                  <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added} |&nbsp;</p>`;
+                  for (let i = 0; i < yellow_stars; i++) {
+                    htmlString += `
+                    <svg class="w-6 h-6 text-yellow mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                    </svg>`; // You can use any star character or image you prefer
+                  }
+
+                  for (let i = 0; i < gray_stars; i++) {
+                    htmlString += `
+                    <svg class="w-6 h-6 text-gray mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                    </svg>`;
+                  }
+            htmlString += `
+            </div>
+            <br><br><hr>
                 <div class="ml-auto flex">
                   <a href="javascript:void(0)" id="upvote-${item.pk}" onclick="upvoteFunction(${item.pk}, false)">
                     <img id="upvote-img-${item.pk}" src="{% static 'images/bx_upvote_false.png' %}">  
                   </a>
                   <p>${item.fields.upvote}</p>
-                  <a href="javascript:void(0)" class="ml-5" id="downvote-${item.pk}" onclick="downvoteFunction(${item.pk}, false)">
+                  <a href="javascript:void(0)" class="ml-3" id="downvote-${item.pk}" onclick="downvoteFunction(${item.pk}, false)">
                     <img id="downvote-img-${item.pk}" src="{% static 'images/bx_downvote_false.png' %}">  
                   </a>
                   <p>${item.fields.downvote}</p>
@@ -276,25 +312,36 @@
     }
 
     function downvoteFunction(value, clicked) {
-      var downvoteImage = document.getElementById(`downvote-${value}`);
-      
-      // Get the onclick attribute
-      var downvoteOnclick = downvoteImage.getAttribute('onclick');
-      console.log(`downvote-${value}`);
-      console.log(downvoteOnclick);
-    }
-
-    async function editUpvote(value, itemId, taken) {
-      let url = '';  // Declare url outside of the if-else blocks
       var downvoteButton = document.getElementById(`downvote-${value}`);
       var downvoteOnclick = downvoteButton.getAttribute('onclick');
 
-      var upvoteButton = document.getElementById(`downvote-${value}`);
-      var upvoteOnclick = downvoteButton.getAttribute('onclick');
+      var upvoteButton = document.getElementById(`upvote-${value}`);
+      var upvoteOnclick = upvoteButton.getAttribute('onclick');
 
       var downvoteImage = document.getElementById(`downvote-img-${value}`);
       var upvoteImage = document.getElementById(`upvote-img-${value}`);
 
+      if (!clicked) {
+        // handle belom diclick (increase downvote)
+        if (downvoteOnclick == `downvoteFunction(${value}, true)`) {
+          // undo downvote (decrease upvote)
+          upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_false.png' %}")
+          upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, false)`)
+          editUpvote(value, -1, 0)
+        }
+        downvoteImage.setAttribute('src', "{% static 'images/bx_downvote_true.png' %}")
+        downvoteButton.setAttribute('onclick', `downvoteFunction(${value}, true)`)
+        editDownvote(value, 1, 1)
+      } else {
+        // handle sudah di click tidak jadi (minus downvote)
+        downvoteImage.setAttribute('src', "{% static 'images/bx_downvote_false.png' %}")
+        downvoteButton.setAttribute('onclick', `downvoteFunction(${value}, false)`)
+        editDownvote(value, -1, 2)
+      }
+    }
+
+    async function editUpvote(value, itemId, taken) {
+      let url = '';  // Declare url outside of the if-else blocks
       if (itemId === 1) {
         url = "{% url 'review:increase_upvote_ajax' 0 %}".replace("0", value);
       } else {
@@ -305,29 +352,20 @@
         method: "POST",  // Ensure that it's a POST request
       }).then(refreshReviews);
 
-      if(taken === 0) {
-        downvoteImage.setAttribute('src', "{% static 'images/bx_downvote_false.png' %}")
-        downvoteButton.setAttribute('onclick', `downvoteFunction(${value}, false)`)
-        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_true.png' %}")
-        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, true)`)
-      }
-      else if (taken === 1){
-        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_true.png' %}")
-        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, true)`)
-      }
-      else {
-        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_false.png' %}")
-        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, false)`)
-      }
-
       return false;
     }
 
-    async function editDownvote(itemId, value) {
-      const url = `/delete_product_ajax/${itemId}`;  // Use backticks for string interpolation
+    async function editDownvote(value, itemId, taken) {
+      let url = '';  // Declare url outside of the if-else blocks
+      if (itemId === 1) {
+        url = "{% url 'review:increase_downvote_ajax' 0 %}".replace("0", value);
+      } else {
+        url = "{% url 'review:decrease_downvote_ajax' 0 %}".replace("0", value);
+      }
+
       fetch(url, {
-          method: "POST",
-      }).then(refreshProducts);
+        method: "POST",  // Ensure that it's a POST request
+      }).then(refreshReviews);
 
       return false;
     }
@@ -349,6 +387,9 @@
         .catch(error => {
             console.error("Error adding review:", error);
         });
+
+        document.getElementById("form").reset()
+
         return false
     }
 

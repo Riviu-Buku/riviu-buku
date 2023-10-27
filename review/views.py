@@ -90,7 +90,7 @@ def decrease_upvote_ajax(request, item_id):
             response_data = {'message': 'POST'}
             status_code = 201
             return HttpResponse(b"POST", status=201)
-        except:
+        except Review.DoesNotExist:
             return HttpResponseNotFound()
 
     return HttpResponseNotFound()
@@ -105,7 +105,7 @@ def increase_downvote_ajax(request, item_id):
             response_data = {'message': 'POST'}
             status_code = 201
             return HttpResponse(b"POST", status=201)
-        except:
+        except Review.DoesNotExist:
             return HttpResponseNotFound()
 
     return HttpResponseNotFound()
@@ -120,7 +120,7 @@ def decrease_downvote_ajax(request, item_id):
             response_data = {'message': 'POST'}
             status_code = 201
             return HttpResponse(b"POST", status=201)
-        except:
+        except Review.DoesNotExist:
             return HttpResponseNotFound()
 
     return HttpResponseNotFound()
