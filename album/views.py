@@ -1,5 +1,8 @@
+from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_GET
+
 from login_register.urls import *
 from homepage.models import Book
 from .forms import AlbumForm
@@ -42,7 +45,16 @@ def add_book_to_album(request):
         added = True
     return JsonResponse({'added': added, 'title': book.title})
 
+@require_GET
+def search_books(request):
+    query = request.GET.get('query', '')
+    books = Book.objects.filter(title__icontains=query)
+    books_list = list(books.values())
+    return JsonResponse(books_list, safe=False)
 
+def get_book_json(request):
+    book_item = Book.objects.all
+    return HttpResponse(serializers.serialize('json', book_item))
 
 def view_lists(request):
     lists = Album.objects.all()
