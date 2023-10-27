@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from homepage.models import Book
-from review.models import Review
+from review.models import Review, ReviewCheck
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -16,11 +16,13 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def show_review(request, id):
     books = Book.objects.get(pk=id)
+    # reviewcheckers = ReviewCheck.objects.get(user=request.user)
     user = request.user
     # books = Book.objects.all()
     context = {
         'books' : books,
         'login_info' : user,
+        # 'reviewcheckers' : reviewcheckers
     }
     return render(request, 'book_review.html', context)
 
@@ -38,17 +40,87 @@ def get_review_by_user_json(request, id):
     reviews = books.review.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', reviews))
 
+# def get_checkedreview_by_user_json(request, review):
+#     checkedreviews = ReviewCheck.filter(user=request.user)
+#     checkedreviews = checkedreviews.get(review = review)
+#     return HttpResponse(serializers.serialize('json', checkedreviews))
+
 @csrf_exempt
 def add_review_ajax(request, id):
     books = Book.objects.get(pk=id)
     if request.method == 'POST':
         description = request.POST.get("description")
+        stars = float(request.POST.get("stars"))  # Convert stars to an integer
         user = request.user
 
-        new_review = Review(description=description, user=user)
+        new_review = Review(description=description, user=user, name=user, stars=stars)
         new_review.save()
         books.review.add(new_review)
+        books.numRatings += 1
+        books.rating = (books.rating * (books.numRatings - 1) + stars) / books.numRatings
+        books.rating = round(books.rating, 1)
+        books.save()
 
         return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
+@csrf_exempt
+def increase_upvote_ajax(request, item_id):
+    if request.method == 'POST':
+        try:
+            review = Review.objects.get(pk=item_id)
+            review.upvote += 1
+            review.save()
+            response_data = {'message': "POST"}
+            status_code = 201
+            return HttpResponse(b"POST", status=201)
+        except Review.DoesNotExist:
+            return HttpResponseNotFound()
+
+    return HttpResponseNotFound()
+
+@csrf_exempt
+def decrease_upvote_ajax(request, item_id):
+    if request.method == 'POST':
+        try:
+            review = Review.objects.get(pk=item_id)
+            review.upvote -= 1
+            review.save()
+            response_data = {'message': 'POST'}
+            status_code = 201
+            return HttpResponse(b"POST", status=201)
+        except:
+            return HttpResponseNotFound()
+
+    return HttpResponseNotFound()
+
+@csrf_exempt
+def increase_downvote_ajax(request, item_id):
+    if request.method == 'POST':
+        try:
+            review = Review.objects.get(pk=item_id)
+            review.downvote += 1
+            review.save()
+            response_data = {'message': 'POST'}
+            status_code = 201
+            return HttpResponse(b"POST", status=201)
+        except:
+            return HttpResponseNotFound()
+
+    return HttpResponseNotFound()
+
+@csrf_exempt
+def decrease_downvote_ajax(request, item_id):
+    if request.method == 'POST':
+        try:
+            review = Review.objects.get(pk=item_id)
+            review.downvote -= 1
+            review.save()
+            response_data = {'message': 'POST'}
+            status_code = 201
+            return HttpResponse(b"POST", status=201)
+        except:
+            return HttpResponseNotFound()
 
     return HttpResponseNotFound()

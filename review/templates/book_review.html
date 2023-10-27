@@ -62,7 +62,7 @@
 {% block content %}
 <body>
   {% load static %}
-  <div class="image-container">
+  <div class="image-container shadow-2xl">
     <img id = "banner" src="{{ books.coverImg }}" alt="{{ books.title }}">
     <div class="overlay"></div>
     <div class="banner-content-box">
@@ -73,7 +73,6 @@
           <p class="card-text my-2" id="genreList"></p>  
           <div class="flex items-center">
             <div id="stars_rating" class="flex items-center"></div>
-            <p class="my-2 ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">{{ books.rating }} out of 5.0</p>
         </div>       
 
           <p class="card-text my-2">{{ books.description }}</p>
@@ -89,14 +88,33 @@
     </div>
   </div>
   <div id="review-container">
-    <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
-        md:items-center md:justify-between">
-      <div id="user_identity" class="bg-cream-tua">
-        <p>test</p>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
-        
+    <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-ungu-muda rounded-md shadow-2xl md:flex md:items-center md:justify-between items-center text-center self-center">
+      <div id="user_identity" class="flex flex-col items-center md:flex-row">
+          <h1 class="font-medium text-center text-3xl text-white">Add your review by clicking here the button!</h1>
+          <button type="button" class="btn btn-primary ml-5 bg-cream-muda text-black rounded-lg hover:bg-cream-tua px-5 text-2xl font-medium text-center" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
       </div>
     </div>
+
+    <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between">
+      <div class="flex">
+        <div class = "flex">
+          <p>nama </p>
+          <p class="text-ungu-tua">&nbsp; | review created at date</p>
+        </div>
+        <div class="ml-auto flex">
+          <a href="javascript:void(0)" id="upvote-${item.pk}">
+            <img id="upvote-img-${item.pk}" src="{% static 'images/bx_upvote_false.png' %}">  
+          </a>
+          <p>0</p>
+          <a href="javascript:void(0)" class="ml-3" id="downvote-${item.pk}">
+            <img id="downvote-img-${item.pk}" src="{% static 'images/bx_downvote_false.png' %}">  
+          </a>
+          <p>0</p>
+        </div>
+      </div>
+      <p>description</p>
+    </div>
+
     <div id="list_review"></div>
 
   </div>
@@ -116,16 +134,23 @@
           </div>
           <div class="modal-body">
               <form id="form" onsubmit="return false;">
-                  {% csrf_token %}
-                  <div class="mb-3">
-                    <label for="Stars" class="col-form-label">Stars:</label>
-                    <textarea class="form-control" id="stars" name="stars"></textarea>
-                  </div>
-                  <div class="mb-3">
-                      <label for="description" class="col-form-label">Description:</label>
-                      <textarea class="form-control" id="description" name="description"></textarea>
-                  </div>
-              </form>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="stars" class="col-form-label">Stars:</label>
+                    <select class="form-control" id="stars" name="stars" required>
+                        <option value="" disabled selected>Select Stars</option>
+                        <option value="1">1 ⭐</option>
+                        <option value="2">2 ⭐⭐</option>
+                        <option value="3">3 ⭐⭐⭐</option>
+                        <option value="4">4 ⭐⭐⭐⭐</option>
+                        <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="col-form-label">Description:</label>
+                    <textarea class="form-control" id="description" name="description" required></textarea>
+                </div>
+            </form>
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -159,45 +184,171 @@
         const reviews = await getReviews()
         const reviewsUser = await getReviewsUser()
         var login_info = {
-          user: "{{ request.user.id }}",  
+          user: "{{ request.user }}", 
+          user_id : "{{ request.user.id }}" 
         };
 
         let htmlString = ``
         reviewsUser.forEach((item) => {{
             htmlString += `
-            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
-        md:items-center md:justify-between flex">
-              <p>${item.fields.user.name} ${item.fields.description}</p>
-              <img src="{% static 'images/bx_upvote_false.png' %}">
-              <img src="{% static 'images/bx_downvote_false.png' %}">
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between">
+              <div class="flex">
+                <div class = "flex">
+                  <p>${login_info.user} </p>
+                  <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added}</p>
+                </div>
+                <div class="ml-auto flex">
+                  <a href="javascript:void(0)" id="upvote-${item.pk}" onclick="upvoteFunction(${item.pk}, false)">
+                    <img id="upvote-img-${item.pk}" src="{% static 'images/bx_upvote_false.png' %}">  
+                  </a>
+                  <p>${item.fields.upvote}</p>
+                  <a href="javascript:void(0)" class="ml-3" id="downvote-${item.pk}" onclick="downvoteFunction(${item.pk}, false)">
+                    <img id="downvote-img-${item.pk}" src="{% static 'images/bx_downvote_false.png' %}">  
+                  </a>
+                  <p>${item.fields.downvote}</p>
+                </div>
+              </div>
+              <p>${item.fields.description}</p>
             </div>
             `;
           }
         }); 
 
         reviews.forEach((item) => {
-          if (!(item.fields.user == login_info.user)){
+          if (!(item.fields.user == login_info.user_id)){
             htmlString += `
-            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
-        md:items-center md:justify-between flex">
-              <p>${item.fields.user.name} ${item.fields.description}</p>
-              <img src="{% static 'images/bx_upvote_false.png' %}">
-              <img src="{% static 'images/bx_downvote_false.png' %}">
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between">
+              <div class="flex">
+                <div class = "flex">
+                  <p>${item.fields.name}</p>
+                  <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added}</p>
+                </div>
+                <div class="ml-auto flex">
+                  <a href="javascript:void(0)" id="upvote-${item.pk}" onclick="upvoteFunction(${item.pk}, false)">
+                    <img id="upvote-img-${item.pk}" src="{% static 'images/bx_upvote_false.png' %}">  
+                  </a>
+                  <p>${item.fields.upvote}</p>
+                  <a href="javascript:void(0)" class="ml-5" id="downvote-${item.pk}" onclick="downvoteFunction(${item.pk}, false)">
+                    <img id="downvote-img-${item.pk}" src="{% static 'images/bx_downvote_false.png' %}">  
+                  </a>
+                  <p>${item.fields.downvote}</p>
+                </div>
+              </div>
+              <p>${item.fields.description}</p>
             </div>
             `;
           }
         }); 
      
         document.getElementById("list_review").innerHTML = htmlString
+        createStars();
+
+    }
+    
+    function upvoteFunction(value, clicked) {
+      var downvoteButton = document.getElementById(`downvote-${value}`);
+      var downvoteOnclick = downvoteButton.getAttribute('onclick');
+
+      var upvoteButton = document.getElementById(`downvote-${value}`);
+      var upvoteOnclick = downvoteButton.getAttribute('onclick');
+
+      var downvoteImage = document.getElementById(`downvote-img-${value}`);
+      var upvoteImage = document.getElementById(`upvote-img-${value}`);
+
+      if(!clicked){
+        //handle belom diclick (increase upvote)
+        if(downvoteOnclick == `downvoteFunction(${value}, true)`) {
+          //undo downvote (decrease downvote)
+          downvoteImage.setAttribute('src', "{% static 'images/bx_downvote_false.png' %}")
+          downvoteButton.setAttribute('onclick', `downvoteFunction(${value}, false)`)
+          editDownvote(value, -1, 0)
+        }
+        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_true.png' %}")
+        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, true)`)
+        editUpvote(value,1, 1)
+      }
+      else {
+        // handle sudah di click tidak jadi (minus upvote)
+        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_false.png' %}")
+        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, false)`)
+        editUpvote(value,-1, 2)
+      }
+    }
+
+    function downvoteFunction(value, clicked) {
+      var downvoteImage = document.getElementById(`downvote-${value}`);
+      
+      // Get the onclick attribute
+      var downvoteOnclick = downvoteImage.getAttribute('onclick');
+      console.log(`downvote-${value}`);
+      console.log(downvoteOnclick);
+    }
+
+    async function editUpvote(value, itemId, taken) {
+      let url = '';  // Declare url outside of the if-else blocks
+      var downvoteButton = document.getElementById(`downvote-${value}`);
+      var downvoteOnclick = downvoteButton.getAttribute('onclick');
+
+      var upvoteButton = document.getElementById(`downvote-${value}`);
+      var upvoteOnclick = downvoteButton.getAttribute('onclick');
+
+      var downvoteImage = document.getElementById(`downvote-img-${value}`);
+      var upvoteImage = document.getElementById(`upvote-img-${value}`);
+
+      if (itemId === 1) {
+        url = "{% url 'review:increase_upvote_ajax' 0 %}".replace("0", value);
+      } else {
+        url = "{% url 'review:decrease_upvote_ajax' 0 %}".replace("0", value);
+      }
+
+      fetch(url, {
+        method: "POST",  // Ensure that it's a POST request
+      }).then(refreshReviews);
+
+      if(taken === 0) {
+        downvoteImage.setAttribute('src', "{% static 'images/bx_downvote_false.png' %}")
+        downvoteButton.setAttribute('onclick', `downvoteFunction(${value}, false)`)
+        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_true.png' %}")
+        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, true)`)
+      }
+      else if (taken === 1){
+        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_true.png' %}")
+        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, true)`)
+      }
+      else {
+        upvoteImage.setAttribute('src', "{% static 'images/bx_upvote_false.png' %}")
+        upvoteButton.setAttribute('onclick', `upvoteFunction(${value}, false)`)
+      }
+
+      return false;
+    }
+
+    async function editDownvote(itemId, value) {
+      const url = `/delete_product_ajax/${itemId}`;  // Use backticks for string interpolation
+      fetch(url, {
+          method: "POST",
+      }).then(refreshProducts);
+
+      return false;
     }
 
     function addReview() {
         fetch("{% url 'review:add_review_ajax' books.id %}", {
             method: "POST",
             body: new FormData(document.querySelector('#form'))
-        }).then(refreshReviews)
-
-        document.getElementById("form").reset()
+        }).then(response => {
+            if (response.status === 201) {
+                // If the review was added successfully, refresh reviews and stars.
+                refreshReviews();
+                refreshStars();
+                
+                // Reset the form.
+                document.getElementById("form").reset();
+            }
+        })
+        .catch(error => {
+            console.error("Error adding review:", error);
+        });
         return false
     }
 
@@ -289,9 +440,9 @@
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
               </svg>`;
             }
+          htmlString += `<p class="my-2 ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">${item.fields.rating} out of 5.0</p>`
           }
         }); 
-     
         document.getElementById("stars_rating").innerHTML = htmlString
     }
 
