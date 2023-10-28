@@ -12,15 +12,15 @@ class Album(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     books = models.ManyToManyField(Book)
     description = models.CharField(max_length=256)
+    cover_image = models.URLField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            original_slug = slugify(self.name)
-            unique_slug = original_slug
-            num = 1
-            while Album.objects.filter(slug=unique_slug).exists():
-                unique_slug = '{}-{}'.format(original_slug, num)
-                num += 1
-            self.slug = unique_slug
-
+        # Save the album first to generate an id
         super().save(*args, **kwargs)
+
+        # Then check if there are any books in the album
+        if self.books.exists():
+            # If there are books, set the cover image to the cover image of the first book
+            self.cover_image = self.books.first().coverImg
+            # Save the album again to update the cover image
+            super().save(*args, **kwargs)
