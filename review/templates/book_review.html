@@ -4,18 +4,141 @@
 <title>
     Review
 </title>
+<style>
+  .image-container {
+    background: black;
+    position: relative;
+    width: 100%;
+    height: 800px;
+    overflow: hidden;
+  }
+
+  #banner {
+    background: black;
+    width: 200%;
+    height: auto;
+    filter: blur(5px);
+    margin: -10px 0;
+  }
+
+  .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 60%, transparent 100%);
+      z-index: 1;
+  }
+
+  .banner-content-box {
+      position: absolute;
+      transform: translate(0%, -50%);
+      bottom: 20px; /* Adjust this value to position your text as desired */
+      left: 20px; /* Adjust this value to position your text as desired */
+      color: white; /* Text color */
+      z-index: 2;
+      font-weight: bold; /* Adjust the font weight as desired */
+      display: flex;
+      margin-right: 60px; 
+      margin-left: 40px; 
+  }
+
+  .banner-content-box img {
+    width: 300px !important;
+    height: 400px !important;
+  }
+
+  .banner-text-box {
+    display: grid;
+    font-size: 12px; /* Adjust the font size as desired */
+    font-weight: normal; /* Adjust the font weight as desired */
+    margin-right: 60px; 
+    margin-left: 40px; 
+  }
+</style>
 {% endblock meta %}
 
 {% block content %}
 <body>
-    <div id="book-details" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
-    md:items-center md:justify-between">
-        <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1625673662l/57147096.jpg" width="300" height="450" class="rounded-md">        
-        <h1>Sousou no frieren</h1>
-    </div>
+  {% load static %}
+  <div class="image-container">
+    <img id = "banner" src="{{ books.coverImg }}" alt="{{ books.title }}">
+    <div class="overlay"></div>
+    <div class="banner-content-box">
+        <img src="{{ books.coverImg }}" alt="{{ books.title }}" width="200" height="350" class="rounded-md">
+        <div class="banner-text-box">
+          <h5 class="card-title my-2" style="font-weight:bolder; font-size: 50px;">{{ books.title }}</h5>
+          <h5 class="card-title my-2" style="font-weight:bold ; font-size: 20px;">{{ books.author }}</h5>
+          <p class="card-text my-2" id="genreList"></p>  
+          <div class="flex items-center">
+            <div id="stars_rating" class="flex items-center"></div>
+            <p class="my-2 ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">{{ books.rating }} out of 5.0</p>
+        </div>       
 
-    <div id="book_cards" style="color: lightgray; margin-left: 30px; margin-right: 30px; background-color: black; width: 95%; border-radius: 25px;"></div>            
+          <p class="card-text my-2">{{ books.description }}</p>
+          <div class="flex my-2">
+            <button id="showCharactersButton" class="bg-cream-muda text-black rounded-lg hover:bg-cream-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5">Show Characters</button>
+            <button id="showCharactersButton" class="bg-ungu-muda text-black rounded-lg hover:bg-ungu-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5">Add to Wishlist</button>
+            <button id="showCharactersButton" class="bg-cream-muda text-black rounded-lg hover:bg-cream-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5">Add to Album</button>
+          </div>
+          <div id="charactersContainer" style="display: none;" class="my-2">
+            <p class="card-text bg-cream-muda text-black rounded-lg px-3 py-2 font-medium" id="characters_text">{{ books.characters }}</p>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div id="review-container">
+    <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
+        md:items-center md:justify-between">
+      <div id="user_identity" class="bg-cream-tua">
+        <p>test</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+        
+      </div>
+    </div>
+    <div id="list_review"></div>
+
+  </div>
+  <div id="book_cards"></div>            
 </div>
+
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Add Reviews</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="form" onsubmit="return false;">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                    <label for="Stars" class="col-form-label">Stars:</label>
+                    <textarea class="form-control" id="stars" name="stars"></textarea>
+                  </div>
+                  <div class="mb-3">
+                      <label for="description" class="col-form-label">Description:</label>
+                      <textarea class="form-control" id="description" name="description"></textarea>
+                  </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Review</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
 </body>
 
 <script>
@@ -23,35 +146,160 @@
         return fetch(`{% url 'homepage:get_books_by_id' books.id %}`).then((res) => res.json())
     }
 
-    async function refreshBooks() {
-        document.getElementById("book_cards").innerHTML = ""
-        const products = await getBooks()
+    async function getReviews() {
+        return fetch(`{% url 'review:get_review_json' books.id %}`).then((res) => res.json())
+    }
+
+    async function getReviewsUser() {
+        return fetch(`{% url 'review:get_review_by_user_json' books.id %}`).then((res) => res.json())
+    }
+
+    async function refreshReviews() {
+        document.getElementById("list_review").innerHTML = ""
+        const reviews = await getReviews()
+        const reviewsUser = await getReviewsUser()
+        var login_info = {
+          user: "{{ request.user.id }}",  
+        };
 
         let htmlString = ``
-        products.forEach((item) => {{
+        reviewsUser.forEach((item) => {{
             htmlString += `
-            <div class="card" style="width: 100%; background:black; color: lightgray; vertical-align: middle;  display: grid;">
-              <div class="card-body" style="width: 90%; display: flex; align-items: center;">
-                <a href="javascript:void(0)" class="btn btn-primary" style="vertical-align: middle; margin-right: 40px; margin-left: 40px; background-color: rgb(255, 207, 207); border-radius: 10px; font-size: 10px; height: 35px; vertical-align: center; border-color: black" onclick="deleteItem(${item.pk})">❌</a>
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
+        md:items-center md:justify-between flex">
+              <p>${item.fields.user.name} ${item.fields.description}</p>
+              <img src="{% static 'images/bx_upvote_false.png' %}">
+              <img src="{% static 'images/bx_downvote_false.png' %}">
+            </div>
+            `;
+          }
+        }); 
 
+        reviews.forEach((item) => {
+          if (!(item.fields.user == login_info.user)){
+            htmlString += `
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:flex
+        md:items-center md:justify-between flex">
+              <p>${item.fields.user.name} ${item.fields.description}</p>
+              <img src="{% static 'images/bx_upvote_false.png' %}">
+              <img src="{% static 'images/bx_downvote_false.png' %}">
+            </div>
+            `;
+          }
+        }); 
+     
+        document.getElementById("list_review").innerHTML = htmlString
+    }
 
-                <img class="card-img-top" src="${item.fields.coverImg}" alt="${item.fields.title}" style="width: 8%; margin-right: 20px; margin-left: 20px; ">
-                <h5 class="card-title" style="margin-right: 40px; margin-left: 40px; font-weight:bolder; font-size: 25px;">${item.fields.title}</h5>
-                <p class="card-text" style="margin-right: 20px; margin-left: 20px; ">${item.fields.description}</p>
+    function addReview() {
+        fetch("{% url 'review:add_review_ajax' books.id %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshReviews)
 
-                <p class="card-text" style="margin-right: 0px; margin-left: 0px; ">${item.fields.characters}</p>
+        document.getElementById("form").reset()
+        return false
+    }
 
-                <p class="card-text" style="margin-right: 20px; margin-left: 20px; ">$${item.fields.price}</p>
-                <p class="card-text" style="margin-right: 20px; margin-left: 20px; ">${item.fields.genres}</p>
-              </div>
-            </div>`;
-        }
-      }); 
+    document.getElementById("button_add").onclick = addReview
+
+    async function refreshBooks() {
+        document.getElementById("book_cards").innerHTML = ""
+        const books = await getBooks()
+
+        let htmlString = ``
+        books.forEach((item) => {{
+            htmlString += ``;
+          }
+        }); 
      
         document.getElementById("book_cards").innerHTML = htmlString
     }
+    
+    async function createGenre() {
+      document.getElementById("genreList").innerHTML = "";
+      const books = await getBooks();
 
+      let htmlString = "";
+
+      books.forEach((item) => {
+        var genres = item.fields.genres;
+        var cleanedGenres = genres.replace(/^\[|\]$/g, ''); 
+        var cleanedGenresArray = cleanedGenres.split(', ').map(genre => genre.replace(/'/g, ''));
+        var genreString = cleanedGenresArray.join(', ');
+        htmlString += `Genres | ${genreString}, `;
+      });
+
+      // Remove the trailing comma and space
+      htmlString = htmlString.slice(0, -2);
+      document.getElementById("genreList").innerHTML = htmlString;
+    }
+
+    async function createCharacters() {
+      const showCharactersButton = document.getElementById("showCharactersButton");
+      const charactersContainer = document.getElementById("charactersContainer");
+
+      // Add a click event listener to the button
+      showCharactersButton.addEventListener("click", function () {
+        // Toggle the visibility of the characters container
+        if (charactersContainer.style.display === "none") {
+          charactersContainer.style.display = "block";
+          showCharactersButton.textContent = "Hide Characters";
+        } else {
+          charactersContainer.style.display = "none";
+          showCharactersButton.textContent = "Show Characters";
+        }
+      });
+      document.getElementById("characters_text").innerHTML = "";
+      const books = await getBooks();
+
+      let htmlString = "";
+
+      books.forEach((item) => {
+        var genres = item.fields.characters;
+        var cleanedGenres = genres.replace(/^\[|\]$/g, ''); 
+        var cleanedGenresArray = cleanedGenres.split(', ').map(genre => genre.replace(/'/g, ''));
+        var genreString = cleanedGenresArray.join(', ');
+        htmlString += `${genreString}, `;
+      });
+
+      // Remove the trailing comma and space
+      htmlString = htmlString.slice(0, -2);
+      document.getElementById("characters_text").innerHTML = htmlString;
+    }
+    
+    async function createStars() {
+        document.getElementById("stars_rating").innerHTML = ""
+        const books = await getBooks()
+
+        let htmlString = ``
+        books.forEach((item) => {{
+            var yellow_stars = Math.ceil(item.fields.rating)
+            var gray_stars = 5 - yellow_stars
+            for (let i = 0; i < yellow_stars; i++) {
+              htmlString += `
+              <svg class="w-6 h-6 text-yellow mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+              </svg>`; // You can use any star character or image you prefer
+            }
+
+            for (let i = 0; i < gray_stars; i++) {
+              htmlString += `
+              <svg class="w-6 h-6 text-gray mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+              </svg>`;
+            }
+          }
+        }); 
+     
+        document.getElementById("stars_rating").innerHTML = htmlString
+    }
+
+    refreshReviews()
+    createCharacters()
+    createStars();
     refreshBooks();
+    createGenre();
     
 
   </script>
