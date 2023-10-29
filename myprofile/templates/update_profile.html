@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>
+    Profile
+</title>
+{% endblock meta %}
+
+{% block content %}
+<head>
+	<script>
+		$(document).ready(function () {
+			document.getElementById("navbar").remove();
+			$("footer").remove();
+		});
+	</script>
+</head>
+
+<div class="w-screen h-screen flex justify-center items-center bg-ungu-muda">
+    <div class="register w-[40rem] drop-shadow-2xl flex flex-col justify-center items-center bg-putih p-5 rounded-xl lg:scale-100 md:scale-90 scale-75">
+        <h1 class="text-2xl font-bold mb-4">Edit Profil</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="space-y-4"> 
+                <div class="form-label mb-2">
+                    <label for="id_name" class="font-bold">Nama:</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-label mb-2">
+                    <label for="id_avatar" class="font-bold">Avatar:</label>
+                    {{ form.avatar }}
+                </div>
+                <div class="avatar-preview mt-2">
+                    <img id="avatar-preview" src="" alt="Avatar Preview" class="w-24 h-24 rounded-full">
+                </div>
+                <div class="form-label mb-2">
+                    <label for="id_email" class="font-bold">Email:</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-label mb-2">
+                    <label for="id_handphone" class="font-bold">Nomor Telepon:</label>
+                    {{ form.handphone }}
+                </div>
+                <div class="form-label mb-2">
+                    <label for="id_bio" class="font-bold">Bio:</label>
+                    {{ form.bio }}
+                </div>
+                <div class="form-label mb-2">
+                    <label for="id_address" class="font-bold">Alamat:</label>
+                    {{ form.address }}
+                </div>
+                <div class="flex justify-center items-center">
+                    <input class="btn mt-4 p-2 bg-ungu-muda rounded-lg h-10 w-full text-black hover:bg-ungu-tua" type="submit" name="submit" value="Selesai" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("id_avatar").addEventListener("change", function () {
+        const selectedAvatar = this.value;
+        
+        const avatarPreview = document.getElementById("avatar-preview");
+        
+        avatarPreview.src = selectedAvatar ? "{% static 'images/' %}" + selectedAvatar : "";
+    });
+</script>
+{% endblock content %}

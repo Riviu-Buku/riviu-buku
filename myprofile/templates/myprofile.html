@@ -1,13 +1,149 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
-<title>
-    Profile
-</title>
+    <title>
+        Profile
+    </title>
 {% endblock meta %}
 
 {% block content %}
-<p>
-    Test Profilekjbahjbhkabkka
-</p>
+    <div class="bg-cream-muda p-8 text-center">
+        <h1 class="text-3xl font-bold mb-4">Profile</h1>
+        <div class="mt-4">
+            {% if user_has_profile %}
+            <img src="{% static 'images/' %}{{ profile_user.avatar }}" alt="Avatar" class="h-48 w-48 rounded-full mx-auto my-4">
+            <p class="text-2xl font-semibold">{{ profile_user.name }}</p>
+            <p class="text-sm">@{{ username}}</p>
+            <p class="text-lg italic text-purple-600">{{ profile_user.bio }}</p>
+            <p class="text-base mt-5">
+                <img src="{% static 'images/icon-email.png' %}" alt="Email Icon" class="inline-block h-6 w-6 -mt-1 mr-2">
+                {{ profile_user.email }}
+            </p>
+            <p class="text-base">
+                <img src="{% static 'images/icon-handphone.png' %}" alt="Handphone Icon" class="inline-block h-6 w-6 -mt-1 mr-2">
+                {{ profile_user.handphone }}
+            </p>
+            <p class="text-base md-5">
+                <img src="{% static 'images/icon-address.png' %}" alt="Address Icon" class="inline-block h-6 w-6 -mt-1 mr-2">
+                {{ profile_user.address }}
+            </p>
+            <a href="{% url 'myprofile:update_profile' %}"
+                class="bg-ungu-tua text-white px-4 py-2 rounded-lg shadow-lg inline-block mt-5 hover:bg-ungu-muda" style="text-decoration: none;">Edit Profile</a>
+            {% else %}
+                <img src="{% static 'images/avatar-default.jpeg' %}" alt="Avatar" class="h-48 w-48 rounded-full mx-auto my-4">
+                <p>@{{username}}</p>
+                <p>Ayo lengkapi profilmu!</p>
+                <a href="{% url 'myprofile:complete_profile' %}"
+                    class="mt-5 bg-ungu-tua text-white px-4 py-2 rounded-lg shadow-lg inline-block" style="text-decoration: none;">Lengkapi Profil</a>
+            {% endif %}
+            <br>
+        </div>
+    </div>
+    <div class="liked-books p-6 bg-putih">
+        <h2 class="text-2xl font-bold mb-4 text-center">❤️ Liked Books:</h2>
+        <div class="mb-4">
+            <input type="text" id="bookSearch" placeholder="Search by Title" class="p-2 rounded border border-gray-300 w-full">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="bookList">
+            {% for book in liked_books %}
+            <div class="bg-cream-muda book-card rounded-lg shadow-xl p-4 mt-4 md-4 ml-3 mr-3 relative">
+                <img src="{{ book.coverImg }}" alt="{{ book.title }}" class="w-full h-64 mb-4 object-cover rounded-t-lg">
+                <div class="bg-white p-4 rounded-b-lg">
+                    <h2 class="text-xl font-semibold mb-2">{{ book.title }}</h2>
+                    <p class="text-gray-500 mb-2">{{ book.author }}</p>
+                    <button class="like-button text-white bg-ungu-tua px-4 py-2 rounded-full" data-book-id="{{ book.id }}">Unlike</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>       
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        async function refreshBooks() {
+    // Fetch the updated list of liked books (you need to implement this)
+    const books = await getLikedBooks();
+    
+    // Get the container where the book cards are displayed
+    const bookList = document.getElementById("bookList");
+
+    // Clear the existing content
+    bookList.innerHTML = '';
+
+    books.forEach(book => {
+        // Create a book card element
+        const bookCard = document.createElement('div');
+        bookCard.className = "bg-cream-muda book-card rounded-lg shadow-xl p-4 mt-4 md-4 ml-3 mr-3 relative";
+        
+        const bookImage = document.createElement('img');
+        bookImage.src = book.coverImg;
+        bookImage.alt = book.title;
+        bookImage.className = "w-full h-64 mb-4 object-cover rounded-t-lg";
+        
+        const bookDetails = document.createElement('div');
+        bookDetails.className = "bg-white p-4 rounded-b-lg";
+        
+        const bookTitle = document.createElement('h2');
+        bookTitle.className = "text-xl font-semibold mb-2";
+        bookTitle.innerText = book.title;
+        
+        const bookAuthor = document.createElement('p');
+        bookAuthor.className = "text-gray-500 mb-2";
+        bookAuthor.innerText = book.author;
+        
+        const unlikeButton = document.createElement('button');
+        unlikeButton.className = "like-button text-white bg-ungu-tua px-4 py-2 rounded-full";
+        unlikeButton.innerText = "Unlike";
+        unlikeButton.setAttribute('data-book-id', book.id);
+        
+        bookDetails.appendChild(bookTitle);
+        bookDetails.appendChild(bookAuthor);
+        bookDetails.appendChild(unlikeButton);
+        
+        bookCard.appendChild(bookImage);
+        bookCard.appendChild(bookDetails);
+        
+        bookList.appendChild(bookCard);
+        });
+    } refreshBooks();
+
+
+        async function toggleUnlike(bookId, element) {
+            $.ajax({
+                url: `/profile/toggle-unlike-book/${bookId}/`,
+                method: 'POST',
+                    data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
+                    success: function(data) {
+                        if (data.unliked) {
+                            // Book was unliked, remove the card from the UI
+                            element.closest('.book-card').remove();  // Remove the entire card.
+                        }
+                    }
+                });
+            }
+
+        // Attach a click event to the "Unlike" button
+        $(".like-button").click(function() {
+            const bookId = $(this).data('book-id');
+            const element = $(this);
+            toggleUnlike(bookId, element);
+        }); then(refreshBooks);
+
+
+        // Function to handle book filtering based on the search query
+        function filterBooks() {
+            const searchQuery = $('#bookSearch').val().toLowerCase();
+            $('#bookList .book-card').each(function() {
+                const bookTitle = $(this).find('.text-xl').text().toLowerCase();
+                if (bookTitle.includes(searchQuery)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Attach an input event to the search input field
+        $('#bookSearch').on('input', filterBooks);
+    </script>
 {% endblock content %}
