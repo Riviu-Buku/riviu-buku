@@ -7,7 +7,22 @@
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-putih">
+<head>
+  <style>
+    .image-container {
+        display: flex; /* Use flexbox to display images horizontally */
+        flex-wrap: wrap; /* Allow items to wrap to the next row */
+    }
+    
+    .clickable-image {
+        margin-right: 20px; /* Add some margin between images for spacing */
+        cursor: pointer;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="bg-putih">
     <p>Test Homepage</p>
     <p>Test</p>
     <p>Test</p>
@@ -17,7 +32,11 @@
     <div id="book_cards" style="color: lightgray; margin-left: 30px; margin-right: 30px; background-color: black; width: 95%; border-radius: 25px;"></div>            
 
     <p>Selamat Datang di Riviu Buku!</p>
-</div>
+
+
+  </div>
+
+</body>
 
 <script>
     async function getBooks() {
