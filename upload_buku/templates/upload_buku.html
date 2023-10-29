@@ -7,7 +7,127 @@
 {% endblock meta %}
 
 {% block content %}
-<p>
-    Test Upload Buku
-</p>
+
+<body class="bg-cream-muda">
+    <div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center ">
+        <div class="max-w-screen-xl m-0 sm:m-10 bg-putih shadow sm:rounded-lg flex justify-center flex-1 " style="background-image: url('images/21532473_6463393.svg');">
+            
+
+            <div class="w-full bg-putih bg-opacity-90 border-2 border-ungu-muda rounded-md ">
+                <div class="mt-5">
+                    <img src="images/logoRiviuBuku.png"
+                        class="w-32 mx-auto" />
+                </div>
+                <div class="mt-12 flex flex-col items-center">
+                    <h1 class="text-2xl xl:text-3xl font-extrabold">
+                        Please fill the fields below
+                    </h1>
+                    <div class="w-3/4 flex-1 mt-8 sm:w-full">
+            
+    
+                        <form class="mx-auto max-w-2xl create-account" method="POST">
+                            {% csrf_token %}
+                            <div class="w-full grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <input
+                                    class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                     type="text" placeholder="Book Title" name="title" id="title"/>
+                                </div>
+                                <div>
+                                    <input
+                                    class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                    type="text" placeholder="Author" name="author" id="author" />
+                                </div>
+                            
+                            </div>
+                            <div class="w-full grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <input
+                                    class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                    type="text" placeholder="Publisher" name="publisher" id="publisher" />
+                                </div>
+                                <div>
+                                    <input
+                                class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                type="number" placeholder="Price" name="price" id="price" />
+                                </div>
+                            
+                            </div>
+                            <div class="w-full grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <input
+                                    class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                    type="text" placeholder="Language" name="language" id="language"/>
+                                </div>
+                                <div>
+                                    <input
+                                class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                type="number" placeholder="Pages" name="pages" id="pages"/>
+                                </div>
+                            
+                            </div>
+                            
+                            <input
+                            class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                            type="text" placeholder="Genre" name="genre" id="genre" />
+                            
+                            <textarea
+                                class="mb-3 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                type="t" placeholder="Description" rows="3"></textarea>
+                            <p class="font-semibold">Upload Book Cover: </p>
+                            
+                            <input
+                                class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                type="file" placeholder="Upload Book Cover" name="coverImg" id="coverImg"/>
+                           
+                            <div class="w-full grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <button
+                                        class="mb-10 mt-5 tracking-wide font-semibold bg-cream-tua text-gray-100 w-full py-4 rounded-lg hover:bg-cream-muda transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                                        <svg 
+                                        class="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9.00002 15.3802H13.92C15.62 15.3802 17 14.0002 17 12.3002C17 10.6002 15.62 9.22021 13.92 9.22021H7.15002" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8.57 10.7701L7 9.19012L8.57 7.62012" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        <span class="ml-3">
+                                            Back
+                                        </span>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button
+                                        class="mb-10 mt-5 tracking-wide font-semibold bg-ungu-muda text-gray-100 w-full py-4 rounded-lg hover:bg-ungu-tua transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" type="submit" name="submit">
+                                        <svg class="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12.5535 2.49392C12.4114 2.33852 12.2106 2.25 12 2.25C11.7894 2.25 11.5886 2.33852 11.4465 2.49392L7.44648 6.86892C7.16698 7.17462 7.18822 7.64902 7.49392 7.92852C7.79963 8.20802 8.27402 8.18678 8.55352 7.88108L11.25 4.9318V16C11.25 16.4142 11.5858 16.75 12 16.75C12.4142 16.75 12.75 16.4142 12.75 16V4.9318L15.4465 7.88108C15.726 8.18678 16.2004 8.20802 16.5061 7.92852C16.8118 7.64902 16.833 7.17462 16.5535 6.86892L12.5535 2.49392Z" fill="#1C274C"/>
+                                        <path d="M3.75 15C3.75 14.5858 3.41422 14.25 3 14.25C2.58579 14.25 2.25 14.5858 2.25 15V15.0549C2.24998 16.4225 2.24996 17.5248 2.36652 18.3918C2.48754 19.2919 2.74643 20.0497 3.34835 20.6516C3.95027 21.2536 4.70814 21.5125 5.60825 21.6335C6.47522 21.75 7.57754 21.75 8.94513 21.75H15.0549C16.4225 21.75 17.5248 21.75 18.3918 21.6335C19.2919 21.5125 20.0497 21.2536 20.6517 20.6516C21.2536 20.0497 21.5125 19.2919 21.6335 18.3918C21.75 17.5248 21.75 16.4225 21.75 15.0549V15C21.75 14.5858 21.4142 14.25 21 14.25C20.5858 14.25 20.25 14.5858 20.25 15C20.25 16.4354 20.2484 17.4365 20.1469 18.1919C20.0482 18.9257 19.8678 19.3142 19.591 19.591C19.3142 19.8678 18.9257 20.0482 18.1919 20.1469C17.4365 20.2484 16.4354 20.25 15 20.25H9C7.56459 20.25 6.56347 20.2484 5.80812 20.1469C5.07435 20.0482 4.68577 19.8678 4.40901 19.591C4.13225 19.3142 3.9518 18.9257 3.85315 18.1919C3.75159 17.4365 3.75 16.4354 3.75 15Z" fill="#1C274C"/>
+                                        </svg>
+                                        <span class="ml-3">
+                                            Submit
+                                        </span>
+                                    </button>
+                                </div>
+                            
+                            </div>
+                            <p class="mt-20 text-xs text-gray-600 text-center">
+                                I agree to abide by RiviuBuku's
+                                <a href="#" class="border-b border-gray-500 border-dotted">
+                                    Terms of Service
+                                </a>
+                                and its
+                                <a href="#" class="border-b border-gray-500 border-dotted">
+                                    Privacy Policy
+                                </a>
+                            </p>
+                            <br>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 {% endblock content %}
