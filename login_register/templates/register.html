@@ -13,59 +13,130 @@
 		});
 	</script>
 </head>
+<body>
+    <div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center scale-y-90">
+        <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+            <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+                <div>
+                    <img src="images/logoRiviuBuku.png"
+                        class="w-32 mx-auto" />
+                </div>
+                <div class="mt-12 flex flex-col items-center">
+                    <h1 class="text-2xl xl:text-3xl font-extrabold">
+                        Create Account
+                    </h1>
+                    <div class="w-full flex-1 mt-8">
+    
+                        <div class="mx-auto max-w-xs create-account">
+							<form method="POST">
+								{% csrf_token %}
+								<input
+                                	class="form-control mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
+                                	type="text" placeholder="Username" name="username" autocapitalize="none" autocomplete="username" autofocus id="id_username" />
+                            	<input
+                                	class="form-control mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih mt-5"
+                                	type="password" placeholder="Password" name="password1" autocomplete="new-password" required id="id_password1" />
+                            	<input
+                                	class="form-control mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih mt-5"
+                                	type="password" placeholder="Confirm Password" name="password2" autocomplete="new-password" required id="id_password2"/>
+								{% if form.username.errors %}  
+								<div class="text-sm text-rose-900 mt-1">
+									{{ form.username.errors }}
+								</div> 
+								{% endif %}
+								{% if form.password1.errors %}  
+								<div class="text-sm text-rose-900 mt-1">
+									{{ form.password1.errors }}
+								</div> 
+								{% endif %}
+								{% if form.password2.errors %}  
+								<div class="text-sm text-rose-900 mt-1">
+									{{ form.password2.errors }}
+								</div> 
+								{% endif %}
+							
+                            	<button
+                                	class="btn login_btn mb-5 mt-5 tracking-wide font-semibold bg-ungu-muda text-gray-100 w-full py-4 rounded-lg hover:bg-ungu-tua transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+									type="submit" value="Daftar">
+                                	<svg class="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
+                                    	stroke-linecap="round" stroke-linejoin="round">
+                                    	<path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                                    	<circle cx="8.5" cy="7" r="4" />
+                                    	<path d="M20 8v6M23 11h-6" />
+                                	</svg>
+                                	<span class="ml-3">
+                                    	Sign Up
+                                	</span>
+                            	</button>
+                            	<p class="mt-10 text-xs text-gray-600 text-center">
+                                	I agree to abide by RiviuBuku's
+                                	<a href="#" class="border-b border-gray-500 border-dotted">
+                                    	Terms of Service
+                                	</a>
+                                	and its
+                                	<a href="#" class="border-b border-gray-500 border-dotted">
+                                    	Privacy Policy
+                                	</a>
+                            	</p>
 
-<div class="w-screen h-screen flex justify-center items-center bg-ungu-muda">
-	<div class="register w-[40rem] drop-shadow-2xl flex flex-col justify-center items-center bg-putih p-5 rounded-xl lg:scale-100 md:scale-90 scale-75">
-		<h1 class="text-2xl font-bold mb-4">REGISTER</h1>
-		<form method="POST">
-			{% csrf_token %}
-			<div>
-				<div class="font-bold" >
-					<label for="id_username">Username</label>
-				</div>
-				<div>
-					<input type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id = "id_username" class="form-control text-sm rounded-lg p-2 w-full">
-				</div>
-				<div class="mt-2 font-bold">
-					<label for="id_password1">Password</label>
-				</div>
-				<div>
-					<input type="password" name="password1" autocomplete="new-password" required id = "id_password1" class="form-control text-sm rounded-lg p-2 w-full">
-				</div>
-				<div class="mt-2 font-bold">
-					<label for="id_password2">Confirm Password</label>
-				</div>
-				<div>
-					<input type="password" name="password2" autocomplete="new-password" required id = "id_password2" class="form-control text-sm rounded-lg p-2 w-full">
-				</div>
-	
+							</form>
+                            
+                        </div>
+                        <div class="my-12 text-center">
+                            <div
+                                class="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-bold bg-white transform translate-y-1/2">
+                                Or
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center other-icons">
+                            <p class="mb-10 text-xs text-gray-600 text-center">
+                                Already have an account?
+                            </p>
+                            <button
+                                class="w-full max-w-xs font-semibold shadow-sm rounded-lg py-3 bg-ungu-muda text-gray-100 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline hover:bg-ungu-tua" onclick="login()">
+                                <svg class="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0"/>
 
-				{% if form.username.errors %}  
-				<div class="text-sm text-rose-900 mt-1">
-					{{ form.username.errors }}
-				</div> 
-				{% endif %}
-				{% if form.password1.errors %}  
-				<div class="text-sm text-rose-900 mt-1">
-					{{ form.password1.errors }}
-				</div> 
-				{% endif %}
-				{% if form.password2.errors %}  
-				<div class="text-sm text-rose-900 mt-1">
-					{{ form.password2.errors }}
-				</div> 
-				{% endif %}
+<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
 
-				<div class="flex justify-center items-center">
-					<input class="btn login_btn mt-4 p-2 bg-ungu-muda rounded-lg h-10 w-full text-black hover:bg-ungu-tua"  type="submit" name="submit" value="Daftar"/>
-				</div>
-				<div class="mt-4">
-					<span class="text-black">
-						Sudah mempunyai akun? <a href="{% url 'login_register:login_user' %}" class="underline font-bold">Log in</a>
-					</span>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
+<g id="SVGRepo_iconCarrier"> <path d="M2.00098 11.999L16.001 11.999M16.001 11.999L12.501 8.99902M16.001 11.999L12.501 14.999" stroke="#000000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/> <path d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.3531 21.8897 19.1752 21.9862 17 21.9983M9.00195 17C9.01406 19.175 9.11051 20.3529 9.87889 21.1213C10.5202 21.7626 11.4467 21.9359 13 21.9827" stroke="#000000" stroke-width="2.4" stroke-linecap="round"/> </g>
+                                </svg>
+                                <span class="ml-4">
+                                    Login
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-1 bg-putih text-center hidden lg:flex decoration-side ">
+                
+                <div class="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
+                    >
+                    <div class="items-center mb-20">
+                        <h1 class="text-2xl xl:text-3xl font-extrabold text-center">
+                            Welcome to RiviuBuku!
+                        </h1>
+                    </div>
+                    <div class="flex items-stretch">
+                        <img src="images/logoRiviuBuku.png"
+                            class="w-32 mx-auto" />
+                    </div>
+                    <br>
+                    <div>
+                        <img src="images/23186849_6737453.svg" alt="" class="scale-75">
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+	function login() {
+		location.href = "{% url 'login_register:login_user' %}";
+	}
+</script>
+<!-- {% url 'login_register:login_user' %} -->
 {% endblock content %}

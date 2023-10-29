@@ -4,5 +4,5 @@ from upload_buku.views import *
 app_name = 'upload_buku'
 
 urlpatterns = [
-    path('', show_upload, name='show_upload')
+    path('', upload_buku, name='upload_buku')
 ]
