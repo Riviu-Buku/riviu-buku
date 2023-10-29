@@ -81,3 +81,4 @@ def toggle_unlike_book(request, book_id):
         liked = True
 
     return JsonResponse({'liked': liked})
+
