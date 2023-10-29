@@ -1,12 +1,12 @@
 from django.core import serializers
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_GET
 from django.utils.text import slugify
 from django.db.utils import IntegrityError
 from login_register.urls import *
 from homepage.models import Book
-from .forms import AlbumForm
+from .forms import AlbumForm, SimpleForm
 from album.models import Album
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Album
@@ -76,6 +76,8 @@ def edit_album(request, slug):
     album = get_object_or_404(Album, slug=slug)
     books = Book.objects.all()
     book_ids = list(album.books.values_list('id', flat=True))
+    if request.user != album.user:
+        return HttpResponseForbidden("You are not allowed to edit this album")
 
     if request.method == 'POST':
         # Get the updated data from the form
@@ -200,3 +202,13 @@ def view_lists(request):
 def view_list(request, slug):
     list = get_object_or_404(Album, slug=slug)
     return render(request, 'list.html', {'list': list})
+
+def ajax_form(request):
+    if request.method == 'POST':
+        form = SimpleForm(request.POST)
+        if form.is_valid():
+            return JsonResponse({"message": "Form submitted successfully"})
+    else:
+        form = SimpleForm()
+
+    return render(request, 'album.html', {'form': form})
