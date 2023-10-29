@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editing album</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+
+    <div class="container mx-auto px-4 py-5">
+        <h1 class="text-3xl font-bold mb-5">Edit album</h1>
+        <form action="{% url 'album:edit_album' album.slug %}" method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+                <input id="name" type="text" name="name" value="{{ album.name }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="mb-4">
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+                <textarea id="description" name="description" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ album.description }}</textarea>
+            </div>
+            <button type="submit" class="mt-2 inline-block bg-purple-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Save</button>
+            </form>
+       <form action="{% url 'album:delete_album' album.slug %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Delete Album" class="mt-2 inline-block bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+</form>
+            <h2 class="text-2xl font-bold mb-4">Current Books:</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="albumBooks">
+        </div>
+            <h2 class="text-2xl font-bold mb-4">Add books to your album</h2>
+        <input type="text" id="bookSearch" onkeyup="searchBooks()" placeholder="Search for books" class="w-full mb-4 p-2 border rounded">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="grid">
+        </div>
+
+        <!-- Add your scripts here -->
+        <script>
+        var selectedBooks = {{ book_ids|safe }};
+        var books = {};
+        var isAddSelectedBooksCalled = false;
+
+        function searchBooks() {
+            // Get the search query
+            var query = document.getElementById('bookSearch').value;
+
+            // Send a request to the server
+            fetch('/album/search-books/?query=' + query)
+                .then(response => response.json())
+                .then(data => {
+                    // Get the grid element
+                    var grid = document.getElementById('grid');
+
+                    // Clear the grid
+                    grid.innerHTML = '';
+
+                    // Loop through all books and create new elements for each one
+                    for (var i = 0; i < data.length; i++) {
+                        var book = data[i];
+
+                        // Store book in global variable
+                        books[book.id] = book;
+
+                        // Create new book element
+                        var bookElement = document.createElement('div');
+                        bookElement.className = 'bg-white rounded-lg shadow-md';
+                        bookElement.innerHTML = `
+                            <img src="${book.coverImg}" alt="${book.title}" class="h-128 w-full rounded-t-lg object-cover">
+                            <div id="book-${book.id}" class="book bg-white rounded shadow-lg p-4 mb-4 flex justify-between items-center" data-title="${book.title}">
+                                <h3 class="text-xl title">${book.title}</h3>
+                                <button onclick="addToAlbum(${book.id})" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded add-to-album-button">Add to album</button>
+                            </div>
+                            `;
+                        // Check if the book is already selected
+                        var isChecked = selectedBooks.includes(book.id) ? 'checked' : '';
+                        if (isChecked === 'checked') {
+                            continue;
+                        } else {
+                            // Add new book element to the grid
+                            grid.appendChild(bookElement);
+                        }
+                    }
+                    if (!isAddSelectedBooksCalled) {
+                        addSelectedBooks();
+                        isAddSelectedBooksCalled = true;
+                    }
+            })
+                .catch(error => console.error('Error:', error));
+        }
+        searchBooks();
+
+        function addSelectedBooks(){
+            for(var i = 0; i < selectedBooks.length; i++){
+                var bookId = selectedBooks[i]
+                // Get the book from global variable
+                var book = books[bookId];
+                console.log(bookId)
+
+                // Create a new div for the book
+                var bookDiv = document.createElement('div');
+                bookDiv.id = 'book-' + bookId;
+                bookDiv.className = 'book bg-white rounded shadow-lg p-4 mb-4 flex flex-col items-center';
+                bookDiv.dataset.title = book.title;
+
+                // Create a new img for the book cover
+                var img = document.createElement('img');
+                img.src = book.coverImg;
+                img.alt = book.title;
+                img.className = 'h-128 w-full rounded-t-lg object-cover';
+                bookDiv.appendChild(img);
+
+                // Create a new h3 for the book title
+                var title = document.createElement('h3');
+                title.className = 'text-xl title mt-4';
+                title.textContent = book.title;
+                bookDiv.appendChild(title);
+
+                // Create a new button for removing the book
+                var removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.className = 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4';
+                removeButton.onclick = (function(bookDivLocal, bookIdLocal) {
+                    return function() {
+                        console.log(bookDivLocal);
+                        document.getElementById('albumBooks').removeChild(bookDivLocal);
+
+                        var index = selectedBooks.indexOf(bookIdLocal);
+                        if (index > -1) {
+                            selectedBooks.splice(index, 1);
+                        }
+
+                        var input = document.querySelector('input[name="books"][value="' + bookIdLocal + '"]');
+                        form.removeChild(input);
+                    };
+                })(bookDiv, bookId);
+                bookDiv.appendChild(removeButton);
+
+                // Add the new div to the album
+                document.getElementById('albumBooks').appendChild(bookDiv);
+                // Create a new hidden input element for this book
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'books';
+                input.value = bookId;
+
+                // Add the hidden input element to the form
+                var form = document.querySelector('form');
+                form.appendChild(input);
+            }
+        }
+
+
+        function addToAlbum(bookId) {
+            // Get the book from global variable
+            var book = books[bookId];
+
+            // Create a new div for the book
+            var bookDiv = document.createElement('div');
+            bookDiv.id = 'book-' + bookId;
+            bookDiv.className = 'book bg-white rounded shadow-lg p-4 mb-4 flex flex-col items-center';
+            bookDiv.dataset.title = book.title;
+
+            // Create a new img for the book cover
+            var img = document.createElement('img');
+            img.src = book.coverImg;
+            img.alt = book.title;
+            img.className = 'h-128 w-full rounded-t-lg object-cover';
+            bookDiv.appendChild(img);
+
+            // Create a new h3 for the book title
+            var title = document.createElement('h3');
+            title.className = 'text-xl title mt-4';
+            title.textContent = book.title;
+            bookDiv.appendChild(title);
+
+            // Create a new button for removing the book
+            var removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.className = 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4';
+            removeButton.onclick = function() {
+                // Remove the book div from the album
+                document.getElementById('albumBooks').removeChild(bookDiv);
+
+                // Remove the book id from selectedBooks
+                var index = selectedBooks.indexOf(bookId);
+                if (index > -1) {
+                    selectedBooks.splice(index, 1);
+                }
+
+                // Remove the hidden input element for this book
+                var input = document.querySelector('input[name="books"][value="' + bookId + '"]');
+                form.removeChild(input);
+            };
+            bookDiv.appendChild(removeButton);
+
+
+            // Add the new div to the album
+            document.getElementById('albumBooks').appendChild(bookDiv);
+
+            selectedBooks.push(bookId);
+
+            // Create a new hidden input element for this book
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'books';
+            input.value = bookId;
+
+            // Add the hidden input element to the form
+            var form = document.querySelector('form');
+            form.appendChild(input);
+            searchBooks();
+        }
+
+        function removeFromAlbum(bookId) {
+            // Remove the book id from selectedBooks
+            var index = selectedBooks.indexOf(bookId);
+            if (index > -1) {
+                selectedBooks.splice(index, 1);
+            }
+
+            // Remove the hidden input element for this book
+            var input = document.querySelector('input[name="books"][value="' + bookId + '"]');
+            form.removeChild(input);
+        }
+        </script>
+    </div>
+{% endblock content %}
