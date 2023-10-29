@@ -13,7 +13,7 @@
 		});
 	</script>
 </head>
-
+{% load static %}
 <body>
     <div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center scale-y-90">
         <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
@@ -27,7 +27,7 @@
                         </h1>
                     </div>
                     <div class="flex items-stretch">
-                        <img src="images/logoRiviuBuku.png"
+                        <img src="{% static 'images/logoRiviuBuku.png' %}"
                             class="w-32 mx-auto" />
                     </div>
                     <br>
@@ -48,13 +48,14 @@
                     </h1>
                     <div class="w-full flex-1 mt-8">
     
-                        <form class="mx-auto max-w-xs create-account">
+                        <form class="mx-auto max-w-xs create-account" method="POST">
+							{% csrf_token %}
                             <input
                                 class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih"
-                                type="text" placeholder="Username" />
+                                type="text" placeholder="Username" name="username"/>
                             <input
                                 class="mb-5 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-ungu-muda focus:bg-putih mt-5"
-                                type="password" placeholder="Password" />
+                                type="password" placeholder="Password" name="password" />
                             <button
                                 class="mb-10 mt-5 tracking-wide font-semibold bg-ungu-muda text-gray-100 w-full py-4 rounded-lg hover:bg-ungu-tua transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" type="submit">
                                 <svg class="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
