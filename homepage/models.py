@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -21,5 +22,7 @@ class Book(models.Model):
     numLikes = models.IntegerField(null=True, blank=True)
     coverImg = models.URLField(null=True, blank=True)
 
+    liked_by_users = models.ManyToManyField(User, related_name="liked_books", blank=True)
+    
     def __str__(self):
         return self.title
