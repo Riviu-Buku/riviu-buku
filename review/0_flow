@@ -32,3 +32,9 @@ di modal tambahin rating by stars
 
 di form review ada user (poto profil nama email)
 di list review ada downvote upvote (reply opsional)
+
+{% if user in book.liked_by_users.all %}
+<button id="likeButton" class="bg-cream-muda text-black rounded-lg hover:bg-ungu-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5" onclick="likeButton()">Like</button>
+{% else %}
+<button id="dislikeButton" class="bg-ungu-muda text-black rounded-lg hover:bg-ungu-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5" onclick="unlikeButton()">Unlike</button>
+{% endif %}
