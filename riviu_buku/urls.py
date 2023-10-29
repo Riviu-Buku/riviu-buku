@@ -21,10 +21,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', include('landingpage.urls')),
+    path('', include('homepage.urls')),
     path('admin/', admin.site.urls),
     path('account/', include('login_register.urls')),
-    path('home/', include('homepage.urls')),
     path('book-detail/', include('review.urls')),
     path('profile/', include('myprofile.urls')),
     path('album/', include('album.urls')),
