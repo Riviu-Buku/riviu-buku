@@ -78,7 +78,7 @@
           <p class="card-text my-2">{{ books.description }}</p>
           <div class="flex my-2">
             <button id="showCharactersButton" class="bg-cream-muda text-black rounded-lg hover:bg-cream-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5">Show Characters</button>
-            <button id="showCharactersButton" class="bg-ungu-muda text-black rounded-lg hover:bg-ungu-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5">Likes</button>
+            <div id="likeButtonAjax"></div>
           </div>
           <div id="charactersContainer" style="display: none;" class="my-2">
             <p class="card-text bg-cream-muda text-black rounded-lg px-3 py-2 font-medium" id="characters_text">{{ books.characters }}</p>
@@ -87,13 +87,30 @@
     </div>
   </div>
   <div id="review-container">
+    {% if user.is_authenticated %}
     <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-ungu-tua rounded-md shadow-2xl md:flex md:items-center md:justify-between items-center text-center self-center">
       <div id="user_identity" class="flex flex-col items-center md:flex-row">
-          <h1 class="font-medium text-center text-3xl text-white">Add your review by clicking the button!</h1>
-          <button type="button" class="btn btn-primary ml-5 bg-cream-muda text-black rounded-lg hover:bg-cream-tua px-5 text-2xl font-medium text-center" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+        <h1 class="font-medium text-center text-3xl text-white">Add your review by clicking the button!</h1>
+        <button type="button" class="btn btn-primary ml-5 bg-cream-muda text-black rounded-lg hover-bg-cream-tua px-5 text-2xl font-medium text-center" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review by Ajax</button>
+        <a href="{% url 'review:write_review' books.id %}">
+          <button class="btn btn-primary ml-5 bg-cream-muda text-black rounded-lg hover-bg-cream-tua px-5 text-2xl font-medium text-center">
+              Add Review by Form
+          </button>
+        </a>
       </div>
     </div>
-
+    {% endif %}
+    <div class="mx-10 my-10 px-10 py-10 bg-ungu-tua rounded-md shadow-2xl md:items-center md:justify-between items-center text-center self-center text-white">
+      <p class="text-xl font-bold mb-3">Filtered by</p>
+      <div class="flex self-center text-center items-center justify-center content-center">
+        <p class="mx-8 font-bold hover:text-cream-tua hover:text-lg duration-500" onclick="refreshReviews()">All</p>
+        <p class="mx-8 font-bold hover:text-cream-tua hover:text-lg duration-500" onclick="refreshReviewsStars(5)">5 stars</p>
+        <p class="mx-8 font-bold hover:text-cream-tua hover:text-lg duration-500" onclick="refreshReviewsStars(4)">4 stars</p>
+        <p class="mx-8 font-bold hover:text-cream-tua hover:text-lg duration-500" onclick="refreshReviewsStars(3)">3 stars</p>
+        <p class="mx-8 font-bold hover:text-cream-tua hover:text-lg duration-500" onclick="refreshReviewsStars(2)">2 stars</p>
+        <p class="mx-8 font-bold hover:text-cream-tua hover:text-lg duration-500" onclick="refreshReviewsStars(1)">1 stars</p>
+      </div>
+    </div>
     <div id="list_review"></div>
 
   </div>
@@ -158,18 +175,68 @@
         return fetch(`{% url 'review:get_review_by_user_json' books.id %}`).then((res) => res.json())
     }
 
-    async function refreshReviews() {
+    async function getLikedByUser() {
+        return fetch(`{% url 'review:get_liked_by_user' books.id %}`).then((res) => res.json())
+    } 
+
+    async function refreshLike() {
+      document.getElementById("likeButtonAjax");
+      let htmlString = ``;
+
+      // Get the liked status from the server
+      const response = await getLikedByUser();
+      var book = {
+          id: "{{ books.id }}", 
+        };
+
+      if (response.error) {
+          htmlString = `
+                <button class="bg-cream-muda text-black rounded-lg hover:bg-ungu-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5" onclick="likeButton(${book.id})">Like</button>`;
+      } else {
+          if (response.liked) {
+              htmlString = `
+              <button class="bg-cream-muda text-black rounded-lg hover:bg-ungu-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5" onclick="likeButton(${book.id})">Like</button>`;
+          } else {
+              
+              htmlString = `
+              
+              <button class="bg-ungu-muda text-black rounded-lg hover:bg-ungu-tua px-2 text-sm font-medium w-32 h-9 text-center mr-5" onclick="unlikeButton(${book.id})">Unlike</button>`;
+          }
+      }
+      document.getElementById("likeButtonAjax").innerHTML = htmlString;
+    }
+
+    async function likeButton(value) {
+      let url = "{% url 'review:add_book_like' 0 %}".replace("0", value);
+
+      fetch(url, {
+        method: "POST",  // Ensure that it's a POST request
+      }).then(refreshLike);
+
+      return false;
+    }
+
+    async function unlikeButton(value) {
+      let url = "{% url 'review:add_book_unlike' 0 %}".replace("0", value);
+
+      fetch(url, {
+        method: "POST",  // Ensure that it's a POST request
+      }).then(refreshLike);
+
+      return false;
+    }
+
+    async function refreshReviewsStars(stars) {
         document.getElementById("list_review").innerHTML = ""
         const reviews = await getReviews()
-        const reviewsUser = await getReviewsUser()
         var login_info = {
           user: "{{ request.user }}", 
           user_id : "{{ request.user.id }}" 
         };
         
         let htmlString = ``
-        reviewsUser.sort((a, b) => (b.fields.upvote - b.fields.downvote) - (a.fields.upvote - a.fields.downvote));
-        reviewsUser.forEach((item) => {{
+        reviews.forEach((item) => {
+          if (item.fields.stars === stars){
             var yellow_stars = Math.ceil(item.fields.stars)
             var gray_stars = 5 - yellow_stars
             
@@ -215,9 +282,75 @@
             `;
           }
         }); 
+     
+        document.getElementById("list_review").innerHTML = htmlString
+        createStars();
+    }
+
+    async function refreshReviews() {
+        document.getElementById("list_review").innerHTML = ""
+        const isAuthenticated = "{{ user.is_authenticated }}";
+        let htmlString = ""
+        if (isAuthenticated === "True") {
+          const reviews = await getReviews()
+          const reviewsUser = await getReviewsUser()
+          var login_info = {
+            user: "{{ request.user }}", 
+            user_id : "{{ request.user.id }}" 
+          };
+          
+          reviewsUser.sort((a, b) => (b.fields.upvote - b.fields.downvote) - (a.fields.upvote - a.fields.downvote));
+          reviewsUser.forEach((item) => {{
+              var yellow_stars = Math.ceil(item.fields.stars)
+              var gray_stars = 5 - yellow_stars
+
+              htmlString += `
+              <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between hover:bg-cream-tua">
+                <div class="flex">
+                  <div class = "flex">
+                    <p>${login_info.user} </p>
+                    <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added} |&nbsp;</p>`;
+                    for (let i = 0; i < yellow_stars; i++) {
+                      htmlString += `
+                      <svg class="w-6 h-6 text-yellow mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                      </svg>`; // You can use any star character or image you prefer
+                    }
+
+                    for (let i = 0; i < gray_stars; i++) {
+                      htmlString += `
+                      <svg class="w-6 h-6 text-gray mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                      </svg>`;
+                    }
+              htmlString += `
+              </div>
+                <br><br><hr>
+                  <div class="ml-auto flex">
+                    <a href="javascript:void(0)" id="upvote-${item.pk}" onclick="upvoteFunction(${item.pk}, false)">
+                      <img id="upvote-img-${item.pk}" src="{% static 'images/bx_upvote_false.png' %}">  
+                    </a>
+                    <p>${item.fields.upvote}</p>
+                    <a href="javascript:void(0)" class="ml-3" id="downvote-${item.pk}" onclick="downvoteFunction(${item.pk}, false)">
+                      <img id="downvote-img-${item.pk}" src="{% static 'images/bx_downvote_false.png' %}">  
+                    </a>
+                    <p>${item.fields.downvote}</p>
+                    <a href="javascript:void(0)" class="ml-3" id="delete-${item.pk}" onclick="deleteReview(${item.pk})">
+                      ❌
+                    </a>
+                  </div>
+                </div>
+                <p>${item.fields.description}</p>
+              </div>
+              `;
+            }
+          });
 
         reviews.sort((a, b) => (b.fields.upvote - b.fields.downvote) - (a.fields.upvote - a.fields.downvote));
         reviews.forEach((item) => {
+          var yellow_stars = Math.ceil(item.fields.stars)
+          var gray_stars = 5 - yellow_stars
+          
           if (!(item.fields.user == login_info.user_id)){
             htmlString += `
             <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between hover:bg-cream-tua">
@@ -250,18 +383,51 @@
                     <img id="downvote-img-${item.pk}" src="{% static 'images/bx_downvote_false.png' %}">  
                   </a>
                   <p>${item.fields.downvote}</p>
-                  <a href="javascript:void(0)" class="ml-3" id="delete-${item.pk}" onclick="deleteReview(${item.pk})">
-                    ❌
-                  </a>
                 </div>
               </div>
               <p>${item.fields.description}</p>
             </div>
             `;
           }
-        }); 
-     
-        document.getElementById("list_review").innerHTML = htmlString
+        });document.getElementById("list_review").innerHTML = htmlString
+      }
+        else {
+          const reviews = await getReviews()
+          let htmlString = ""
+          reviews.sort((a, b) => (b.fields.upvote - b.fields.downvote) - (a.fields.upvote - a.fields.downvote));
+
+          reviews.forEach((item) => {
+            var yellow_stars = Math.ceil(item.fields.stars)
+            var gray_stars = 5 - yellow_stars
+            htmlString += `
+            <div id="submit_review_form" class="mx-10 my-10 px-10 py-10 bg-cream-muda rounded-md shadow-2xl md:items-center md:justify-between hover:bg-cream-tua">
+              <div class="flex">
+                <div class = "flex">
+                  <p>${item.fields.name}</p>
+                  <p class="text-ungu-tua">&nbsp; | review created at ${item.fields.date_added} |&nbsp;</p>`;
+                  for (let i = 0; i < yellow_stars; i++) {
+                    htmlString += `
+                    <svg class="w-6 h-6 text-yellow mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                    </svg>`; // You can use any star character or image you prefer
+                  }
+
+                  for (let i = 0; i < gray_stars; i++) {
+                    htmlString += `
+                    <svg class="w-6 h-6 text-gray mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                    </svg>`;
+                  }
+            htmlString += `
+            </div>
+            <br><br><hr>
+              </div>
+              <p>${item.fields.description}</p>
+            </div>
+            `;
+          });document.getElementById("list_review").innerHTML = htmlString
+        }
+        
         createStars();
 
     }
@@ -356,7 +522,7 @@
       }
 
       fetch(url, {
-        method: "POST",  // Ensure that it's a POST request
+        method: "GET",  // Ensure that it's a POST request
       }).then(refreshReviews);
 
       return false;
@@ -468,40 +634,46 @@
       htmlString = htmlString.slice(0, -2);
       document.getElementById("characters_text").innerHTML = htmlString;
     }
-    
+  
     async function createStars() {
-        document.getElementById("stars_rating").innerHTML = ""
-        const books = await getBooks()
+    document.getElementById("stars_rating").innerHTML = ""
+    const books = await getBooks()
 
-        let htmlString = ``
-        books.forEach((item) => {{
-            var yellow_stars = Math.ceil(item.fields.rating)
-            var gray_stars = 5 - yellow_stars
-            for (let i = 0; i < yellow_stars; i++) {
-              htmlString += `
-              <svg class="w-6 h-6 text-yellow mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-              </svg>`; // You can use any star character or image you prefer
-            }
+    let htmlString = ""
 
-            for (let i = 0; i < gray_stars; i++) {
-              htmlString += `
-              <svg class="w-6 h-6 text-gray mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-              </svg>`;
-            }
-          htmlString += `<p class="my-2 ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">${item.fields.rating} out of 5.0</p>`
-          }
-        }); 
-        document.getElementById("stars_rating").innerHTML = htmlString
+    books.forEach((item) => {{
+        var yellow_stars = Math.ceil(item.fields.rating)
+        var gray_stars = 5 - yellow_stars
+        for (let i = 0; i < yellow_stars; i++) {
+          htmlString += `
+          <svg class="w-6 h-6 text-yellow mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+          </svg>`; // You can use any star character or image you prefer
+        }
+
+        for (let i = 0; i < gray_stars; i++) {
+          htmlString += `
+          <svg class="w-6 h-6 text-gray mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+          </svg>`;
+        }
+      htmlString += `<p class="my-2 ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">${item.fields.rating} out of 5.0</p>`
+      }
+    }); 
+    document.getElementById("stars_rating").innerHTML = htmlString
     }
 
-    refreshReviews()
-    createCharacters()
-    createStars();
+
+    const isAuthenticated = "{{ user.is_authenticated }}";
+
+    if (isAuthenticated === "True") {
+    refreshLike();}
+    refreshReviews();
     refreshBooks();
+
+    createCharacters();
+    createStars();
     createGenre();
     
-
   </script>
 {% endblock content %}
