@@ -3,9 +3,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from myprofile.models import ProfileUser
 from homepage.models import Book
+from review.models import Review
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from myprofile.forms import *
+from django.views.decorators.http import require_POST
 
 @login_required
 def show_profile(request):
@@ -69,12 +71,9 @@ def update_profile(request):
 
 @login_required
 def toggle_unlike_book(request, book_id):
-    # Get the book instance
     book = get_object_or_404(Book, id=book_id)
 
-    # Check if the user has liked the book
     if book.liked_by_users.filter(id=request.user.id).exists():
-        # User has liked the book, so unlike it
         book.liked_by_users.remove(request.user)
         liked = False
     else:
@@ -82,3 +81,17 @@ def toggle_unlike_book(request, book_id):
 
     return JsonResponse({'liked': liked})
 
+@login_required
+@require_POST
+def update_bio(request):
+    user = request.user
+    new_bio = request.POST.get('bio', '')
+
+    try:
+        user.profileuser.bio = new_bio
+        user.profileuser.save()
+
+        # You can also return the updated bio in the response
+        return JsonResponse({'success': True, 'new_bio': new_bio})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

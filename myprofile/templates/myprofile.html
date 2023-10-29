@@ -15,7 +15,12 @@
             <img src="{% static 'images/' %}{{ profile_user.avatar }}" alt="Avatar" class="h-48 w-48 rounded-full mx-auto my-4">
             <p class="text-2xl font-semibold">{{ profile_user.name }}</p>
             <p class="text-sm">@{{ username}}</p>
-            <p class="text-lg italic text-purple-600">{{ profile_user.bio }}</p>
+            <p class="text-lg italic text-purple-600" id="bio-text">{{ profile_user.bio }}</p>
+            <button id="edit-bio-button" class="text-sm text-ungu-tua border-ungu-tua border rounded-full px-2 py-1 mt-2">Edit Bio</button>
+            <form id="bio-form" class="mt-2">
+                <textarea id="bio-input" class="w-full rounded border border-gray-300 p-2">{{ profile_user.bio }}</textarea>
+                <button type="submit" class="bg-ungu-tua text-white px-4 py-2 rounded-full hover:bg-ungu-muda" style="text-decoration: none;">Save</button>
+            </form>
             <p class="text-base mt-5">
                 <img src="{% static 'images/icon-email.png' %}" alt="Email Icon" class="inline-block h-6 w-6 -mt-1 mr-2">
                 {{ profile_user.email }}
@@ -41,96 +46,53 @@
         </div>
     </div>
     <div class="liked-books p-6 bg-putih">
-        <h2 class="text-2xl font-bold mb-4 text-center">❤️ Liked Books:</h2>
-        <div class="mb-4">
+        <div class="text-center ml-5 font-semibold text-lg">
+            ❤️ Liked Books ❤️
+        </div>
+        <div class="mb-4 mt-5">
             <input type="text" id="bookSearch" placeholder="Search by Title" class="p-2 rounded border border-gray-300 w-full">
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="bookList">
             {% for book in liked_books %}
             <div class="bg-cream-muda book-card rounded-lg shadow-xl p-4 mt-4 md-4 ml-3 mr-3 relative">
                 <img src="{{ book.coverImg }}" alt="{{ book.title }}" class="w-full h-64 mb-4 object-cover rounded-t-lg">
-                <div class="bg-white p-4 rounded-b-lg">
+
                     <h2 class="text-xl font-semibold mb-2">{{ book.title }}</h2>
                     <p class="text-gray-500 mb-2">{{ book.author }}</p>
-                    <button class="like-button text-white bg-ungu-tua px-4 py-2 rounded-full" data-book-id="{{ book.id }}">Unlike</button>
-                </div>
+                    <button class="like-button text-white bg-ungu-tua px-4 py-2 rounded-full hover:bg-ungu-muda" data-book-id="{{ book.id }}">Unlike</button>
+    
             </div>
             {% endfor %}
         </div>
     </div>       
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        async function refreshBooks() {
-    // Fetch the updated list of liked books (you need to implement this)
-    const books = await getLikedBooks();
-    
-    // Get the container where the book cards are displayed
-    const bookList = document.getElementById("bookList");
+         $("#edit-bio-button").click(function() {
+        $("#bio-text").hide();
+        $("#bio-form").show();
+    });
 
-    // Clear the existing content
-    bookList.innerHTML = '';
+    // Add an event listener to the bio form submission
+    $("#bio-form").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
 
-    books.forEach(book => {
-        // Create a book card element
-        const bookCard = document.createElement('div');
-        bookCard.className = "bg-cream-muda book-card rounded-lg shadow-xl p-4 mt-4 md-4 ml-3 mr-3 relative";
-        
-        const bookImage = document.createElement('img');
-        bookImage.src = book.coverImg;
-        bookImage.alt = book.title;
-        bookImage.className = "w-full h-64 mb-4 object-cover rounded-t-lg";
-        
-        const bookDetails = document.createElement('div');
-        bookDetails.className = "bg-white p-4 rounded-b-lg";
-        
-        const bookTitle = document.createElement('h2');
-        bookTitle.className = "text-xl font-semibold mb-2";
-        bookTitle.innerText = book.title;
-        
-        const bookAuthor = document.createElement('p');
-        bookAuthor.className = "text-gray-500 mb-2";
-        bookAuthor.innerText = book.author;
-        
-        const unlikeButton = document.createElement('button');
-        unlikeButton.className = "like-button text-white bg-ungu-tua px-4 py-2 rounded-full";
-        unlikeButton.innerText = "Unlike";
-        unlikeButton.setAttribute('data-book-id', book.id);
-        
-        bookDetails.appendChild(bookTitle);
-        bookDetails.appendChild(bookAuthor);
-        bookDetails.appendChild(unlikeButton);
-        
-        bookCard.appendChild(bookImage);
-        bookCard.appendChild(bookDetails);
-        
-        bookList.appendChild(bookCard);
-        });
-    } refreshBooks();
+        const newBio = $("#bio-input").val();
 
-
-        async function toggleUnlike(bookId, element) {
-            $.ajax({
-                url: `/profile/toggle-unlike-book/${bookId}/`,
-                method: 'POST',
-                    data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
-                    success: function(data) {
-                        if (data.unliked) {
-                            // Book was unliked, remove the card from the UI
-                            element.closest('.book-card').remove();  // Remove the entire card.
-                        }
-                    }
-                });
+        // Make an AJAX POST request to update the bio
+        $.ajax({
+            url: "{% url 'myprofile:update_bio' %}",
+            method: "POST",
+            data: { csrfmiddlewaretoken: "{{ csrf_token }}", bio: newBio },
+            success: function(data) {
+                // Update the UI with the new bio
+                $("#bio-text").text(newBio).show();
+                $("#bio-form").hide();
+            },
+            error: function(error) {
+                console.error("Error updating bio:", error);
             }
-
-        // Attach a click event to the "Unlike" button
-        $(".like-button").click(function() {
-            const bookId = $(this).data('book-id');
-            const element = $(this);
-            toggleUnlike(bookId, element);
-        }); then(refreshBooks);
-
-
-        // Function to handle book filtering based on the search query
+        });
+    });
         function filterBooks() {
             const searchQuery = $('#bookSearch').val().toLowerCase();
             $('#bookList .book-card').each(function() {
@@ -143,7 +105,84 @@
             });
         }
 
-        // Attach an input event to the search input field
         $('#bookSearch').on('input', filterBooks);
+
+        async function getLikedBooks() {
+        try {
+            const response = await $.ajax({
+                url: '/show_profile/',  
+                method: 'GET',
+                dataType: 'json',
+            });
+            return response.liked_books;
+        } catch (error) {
+            console.error('Error fetching liked books:', error);
+            return [];
+            }
+        }
+        async function refreshBooks() {
+            const books = await getLikedBooks();
+            const bookList = document.getElementById("bookList");
+
+            bookList.innerHTML = '';
+
+            books.forEach(book => {
+
+            const bookCard = document.createElement('div');
+            bookCard.className = "bg-cream-muda book-card rounded-lg shadow-xl p-4 mt-4 md-4 ml-3 mr-3 relative";
+        
+            const bookImage = document.createElement('img');
+            bookImage.src = book.coverImg;
+            bookImage.alt = book.title;
+            bookImage.className = "w-full h-64 mb-4 object-cover rounded-t-lg";
+        
+            const bookDetails = document.createElement('div');
+            bookDetails.className = "bg-white p-4 rounded-b-lg";
+        
+            const bookTitle = document.createElement('h2');
+            bookTitle.className = "text-xl font-semibold mb-2";
+            bookTitle.innerText = book.title;
+        
+            const bookAuthor = document.createElement('p');
+            bookAuthor.className = "text-gray-500 mb-2";
+            bookAuthor.innerText = book.author;
+        
+            const unlikeButton = document.createElement('button');
+            unlikeButton.className = "like-button text-white bg-ungu-tua px-4 py-2 rounded-full";
+            unlikeButton.innerText = "Unlike";
+            unlikeButton.setAttribute('data-book-id', book.id);
+        
+            bookDetails.appendChild(bookTitle);
+            bookDetails.appendChild(bookAuthor);
+            bookDetails.appendChild(unlikeButton);
+        
+            bookCard.appendChild(bookImage);
+            bookCard.appendChild(bookDetails);
+        
+            bookList.appendChild(bookCard);
+            });
+        } 
+
+        async function toggleUnlike(bookId, element) {
+            $.ajax({
+                url: `/profile/toggle-unlike-book/${bookId}/`,
+                method: 'POST',
+                data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
+                success: function(data) {
+                    if (data.unliked) {
+                        element.closest('.book-card').remove(); 
+                    }
+                }
+            }).then(refreshBooks);
+        }
+
+        $(".like-button").click(function() {
+            const bookId = $(this).data('book-id');
+            const element = $(this);
+            toggleUnlike(bookId, element);
+        }); 
+
+        
     </script>
+
 {% endblock content %}
