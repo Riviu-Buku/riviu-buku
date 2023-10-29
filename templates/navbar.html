@@ -27,6 +27,10 @@
                 class="hover:text-cream-muda hover:text-lg duration-500">Profile</a>
         </div>
         <div class="md:mx-5 my-3 md:my-0">
+            <a href="{% url 'myprofile:show_profile' %}"
+                class="hover:text-cream-muda hover:text-lg duration-500">Upload</a>
+        </div>
+        <div class="md:mx-5 my-3 md:my-0">
             <button class="btn rounded-lg hover:cursor-pointer bg-cream-muda text-purple-800 hover:bg-cream-tua h-9 flex items-center justify-center"><a href="{% url 'login_register:logout_user' %}">Logout</a></button>
         </div>
         {% else %}
