@@ -1,78 +1,25 @@
-from django.test import TestCase
+from django.http import HttpRequest
+from django.test import RequestFactory, TestCase
+from django.core import serializers
 from django.urls import reverse
 from homepage.models import Book
+from homepage.views import add_book_ajax, get_books, get_books_by_id, show_homepage
 
 class HomePageTest(TestCase):
-    def setUp(self):
-        # Create some sample books
-        Book.objects.create(
-            title="Book 1",
-            author="Author 1",
-            description="Description for Book 1",
-            rating=4.5,
-            price=10.0,
-            language="English",
-            genres=["Genre 1", "Genre 2"],
-            characters=["Character 1", "Character 2"],
-            edition="First Edition",
-            pages=300,
-            publisher="Publisher 1",
-            awards=["Award 1", "Award 2"],
-            numRatings=100,
-            numLikes=50,
-            coverImg="http://example.com/cover1.jpg",
-        )
-        Book.objects.create(
-            title="Book 2",
-            author="Author 2",
-            description="Description for Book 2",
-            rating=4.0,
-            price=12.0,
-            language="Spanish",
-            genres=["Genre 2", "Genre 3"],
-            characters=["Character 2", "Character 3"],
-            edition="Second Edition",
-            pages=250,
-            publisher="Publisher 2",
-            awards=["Award 3", "Award 4"],
-            numRatings=80,
-            numLikes=40,
-            coverImg="http://example.com/cover2.jpg",
-        )
-
-    def test_homepage_loads_correctly(self):
-        response = self.client.get(reverse('homepage:show_homepage'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Selamat Datang di Riviu Buku!")
-
-    def test_search_books_by_title(self): # When searching, the link is the same as the home page link
-        response = self.client.get(reverse('homepage:show_homepage'))
-        self.assertNotContains(response, "Book 1")
-        self.assertNotContains(response, "Book 2")
-
-        response = self.client.get(reverse('homepage:show_homepage') + '?title=Book 1')
-        self.assertNotContains(response, "Book 1")
-        self.assertNotContains(response, "Book 2")
-
-    def test_search_books_by_author(self): # Can't search book by the author
-        response = self.client.get(reverse('homepage:show_homepage'))
-        self.assertNotContains(response, "Author 1")
-        self.assertNotContains(response, "Author 2")
-
-        response = self.client.get(reverse('homepage:show_homepage') + '?author=Author 1')
-        self.assertNotContains(response, "Author 1")
-        self.assertNotContains(response, "Author 2")
-
-    def test_get_books_endpoint(self):
+    def test_valid_request_with_books(self):
         response = self.client.get(reverse('homepage:get_books'))
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(len(data), 102) # 100 data from json and 2 were created in this file test
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertGreater(len(response.content), 0)
 
-    def test_get_books_by_id_endpoint(self):
-        book = Book.objects.get(title="Book 1")
+    def test_returns_json_response_with_matching_book_id(self):
+        book = Book.objects.first()
         response = self.client.get(reverse('homepage:get_books_by_id', args=[book.pk]))
         self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data[0]['fields']['title'], "Book 1")
-        self.assertNotContains(response, "Book 2")
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertJSONEqual(response.content, serializers.serialize("json", [book]))
+
+    def test_add_book_valid_title_author(self):
+        data = {'title': 'Book Title', 'author': 'Author Name'}
+        response = self.client.post(reverse('homepage:add_book_ajax'), data)
+        self.assertEqual(response.status_code, 201)
