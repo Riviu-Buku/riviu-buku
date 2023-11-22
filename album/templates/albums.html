@@ -13,7 +13,9 @@
         <section class="mb-10 text-center">
     <h2 class="text-2xl font-bold mb-4">Albums: Your Personal Book Collections</h2>
     <p class="text-lg">Gather, organize, and share. Albums are an ideal way to group books.</p>
+    {% if user.is_authenticated %}
     <a href="{% url 'album:create_album' %}" class="mt-4 inline-block bg-purple-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Create an Album</a>
+    {% endif %}
 </section>
         <input type="text" id="albumSearch" oninput="searchAlbums()" placeholder="Search albums..." class="w-full mb-4 p-2 border rounded">
         <div id="albums-grid" class= "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

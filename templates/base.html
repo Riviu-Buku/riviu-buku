@@ -14,39 +14,6 @@
     tailwind.config = {
       important: true,
       theme: {
-        extend: {
-            animation: {
-                "slide-fwd-center": "slide-fwd-center 0.45s cubic-bezier(0.250, 0.460, 0.450, 0.940)   both",
-                "scale-down-center": "scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940)   both",
-                "slide-right": "slide-right 0.5s cubic-bezier(0.950, 0.050, 0.795, 0.035)   both",
-            },
-            keyframes: {
-                "slide-fwd-center": {
-                    "0%": {
-                        transform: "translateZ(0)"
-                    },
-                    to: {
-                        transform: "translateZ(160px)"
-                    }
-                },
-                "scale-down-center": {
-                    "0%": {
-                        transform: "scale(1)"
-                    },
-                    to: {
-                        transform: "scale(.5)"
-                    }
-                },
-                "slide-right": {
-                    "0%": {
-                        transform: "translateX(0)"
-                    },
-                    to: {
-                        transform: "translateX(100px)"
-                    }
-                },
-            }
-        },
         colors: {
           'ungu-muda':'#B8B8FF',
           'ungu-tua':'#9381FF',
