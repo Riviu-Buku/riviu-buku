@@ -28,8 +28,9 @@
       </div>
 
       <div id="book_cards" class="image-container pt-6 pb-6 pr-6 pl-6 w-95 rounded-2xl"></div>
-      
-      <button type="button" class="btn btn-primary mb-3 ml-6" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Product by AJAX</button>
+      {% if user.is_authenticated %}
+        <button type="button" class="btn btn-primary mb-3 ml-6 bg-ungu-muda" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Product by AJAX</button>
+        {% endif %}
 
       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
