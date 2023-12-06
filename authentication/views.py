@@ -2,6 +2,31 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+import json
+from myprofile.models import ProfileUser
+from django.contrib.auth.models import User
+
+@csrf_exempt
+def login_custom(request):
+    data = json.loads(request.body)
+    auth_user = User.objects.get(username= data['username'])
+    print('tes3t')
+    if auth_user is None:
+        return JsonResponse({
+                "status": False,
+                "message": "Login gagal, akun dinonaktifkan."
+            }, status=401)
+    user = ProfileUser.objects.get(user=auth_user)
+    # print(({'user':newuser.to_dict()}))
+    print('test')
+
+    # user = ProfileUser.objects.get(user__username= data['username'])
+    if user is None:
+        return JsonResponse({
+                "status": False,
+                "message": "Login gagal, akun dinonaktifkan."
+            }, status=401)
+    return JsonResponse({'user':user.to_dict()})
 
 @csrf_exempt
 def login(request):
