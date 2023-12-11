@@ -18,5 +18,7 @@ urlpatterns = [
     path('increase-downvote/<int:item_id>/', increase_downvote_ajax, name='increase_downvote_ajax'),
     path('decrease-downvote/<int:item_id>/', decrease_downvote_ajax, name='decrease_downvote_ajax'),
     path('delete-review/<int:item_id>/', delete_review, name='delete_review'),
-    
+    path('create-review-flutter/', create_review_flutter),
+    path('add-like-flutter/', add_like_flutter),
+    path('add-unlike-flutter/', add_unlike_flutter),
 ]
