@@ -21,4 +21,5 @@ urlpatterns = [
     path('create-review-flutter/', create_review_flutter),
     path('add-like-flutter/', add_like_flutter),
     path('add-unlike-flutter/', add_unlike_flutter),
+    path('get-liked-user-flutter/', get_liked_by_user_flutter),
 ]
