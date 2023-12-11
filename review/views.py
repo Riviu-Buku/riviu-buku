@@ -278,7 +278,6 @@ def create_review_flutter(request):
         return JsonResponse({"status": "error"}, status=401)
     
 @csrf_exempt
-@login_required
 def add_like_flutter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -292,7 +291,6 @@ def add_like_flutter(request):
         return JsonResponse({"status": "error"}, status=401)
 
 @csrf_exempt
-@login_required
 def add_unlike_flutter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -302,5 +300,24 @@ def add_unlike_flutter(request):
         books.save()
 
         return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+ 
+@csrf_exempt
+def get_liked_by_user_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        try:
+            # Use get_object_or_404 to retrieve the book or return a custom JSON response
+            user = User.objects.get(username= data["user"])
+            book = get_object_or_404(Book, liked_by_users=user, id=int(data["bookId"]))
+            # Serialize the book to JSON and return it in the response
+            data = serializers.serialize('json', [book])
+            return JsonResponse({"status": "success", "like": True}, status=200)
+        except Http404:
+            # Handle the 404 error by returning a custom JSON response
+            response_data = {'status': 'Book not found', "like": False}
+            return JsonResponse(response_data, status=200)
+        
     else:
         return JsonResponse({"status": "error"}, status=401)
