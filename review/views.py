@@ -16,6 +16,9 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from review.forms import ReviewForm
 from django.urls import reverse
+import json
+from myprofile.models import ProfileUser
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -252,3 +255,52 @@ def delete_review(request, item_id):
             return HttpResponseNotFound()
 
     return HttpResponseNotFound()
+
+@csrf_exempt
+def create_review_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        books = Book.objects.get(pk= int(data["bookId"]))
+        auth_user = User.objects.get(username= data["user"])
+        stars = int(data["stars"])
+        description = data["description"]
+
+        new_review = Review(description=description, user=auth_user, name=auth_user, stars=stars)
+        new_review.save()
+        books.review.add(new_review)
+        books.numRatings += 1
+        books.rating = (books.rating * (books.numRatings - 1) + stars) / books.numRatings
+        books.rating = round(books.rating, 1)
+        books.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+@login_required
+def add_like_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        books = Book.objects.get(pk= int(data["bookId"]))
+        user = User.objects.get(username= data["user"])
+        books.liked_by_users.add(user)
+        books.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+@login_required
+def add_unlike_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        books = Book.objects.get(pk= int(data["bookId"]))
+        user = User.objects.get(username= data["user"])
+        books.liked_by_users.remove(user)
+        books.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
