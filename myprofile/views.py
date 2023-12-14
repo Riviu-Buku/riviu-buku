@@ -3,11 +3,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from myprofile.models import ProfileUser
 from homepage.models import Book
-from review.models import Review
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.urls import reverse
 from myprofile.forms import *
 from django.views.decorators.http import require_POST
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.core import serializers
 
 @login_required
 def show_profile(request):
@@ -95,3 +98,81 @@ def update_bio(request):
         return JsonResponse({'success': True, 'new_bio': new_bio})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+    
+# @csrf_exempt
+# def complete_profile_flutter(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         auth_user = User.objects.get(username=data["username"])
+#         name = data["name"]
+#         bio = data["bio"]
+#         email = data["email"]
+#         handphone = data["handphone"]
+#         address = data["address"]
+
+#         new_profile = ProfileUser(user=auth_user, name=name, bio=bio, email=email, handphone=handphone, address=address)
+#         new_profile.save()
+
+#         return JsonResponse({"status": "success"}, status=200)
+#     else:
+#         return JsonResponse({"status": "error"}, status=401)
+
+def complete_profile_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = request.user
+
+        profile_user = user.profileuser
+
+        profile_user.name = data.get("name", profile_user.name)
+        profile_user.avatar = data.get("avatar", profile_user.avatar)
+        profile_user.bio = data.get("bio", profile_user.bio)
+        profile_user.email = data.get("email", profile_user.email)
+        profile_user.handphone = data.get("handphone", profile_user.handphone)
+        profile_user.address = data.get("address", profile_user.address)
+
+        profile_user.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+    
+@csrf_exempt 
+def update_profile_flutter(request): #belum kepake
+    user = request.user
+    try:
+        profile = ProfileUser.objects.get(user=user)
+    except ProfileUser.DoesNotExist:
+        profile = None
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        form = ProfileForm(data, instance=profile)
+
+        if form.is_valid():
+            updated_profile = form.save(commit=False)
+            updated_profile.user = user
+            updated_profile.save()
+            messages.success(request, 'Your profile details have been successfully updated!')
+            return JsonResponse({"status": "success"}, status=200)
+        else:
+            return JsonResponse({"status": "error", "errors": form.errors}, status=400)
+
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    
+@csrf_exempt
+def get_books_liked_by_user_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        try:
+            user = User.objects.get(username=data["user"])
+            liked_books = Book.objects.filter(liked_by_users=user)
+            serialized_books = serializers.serialize('json', liked_books)
+            return JsonResponse({"status": "success", "liked_books": serialized_books}, status=200)
+        except Http404:
+            response_data = {'status': 'User not found', "liked_books": []}
+            return JsonResponse(response_data, status=200)
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
