@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Lists</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-5">
+        <section class="mb-10 text-center">
+    <h2 class="text-2xl font-bold mb-4">Albums: Your Personal Book Collections</h2>
+    <p class="text-lg">Gather, organize, and share. Albums are an ideal way to group books.</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'album:create_album' %}" class="mt-4 inline-block bg-purple-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Create an Album</a>
+    {% endif %}
+</section>
+        <input type="text" id="albumSearch" oninput="searchAlbums()" placeholder="Search albums..." class="w-full mb-4 p-2 border rounded">
+        <div id="albums-grid" class= "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        </div>
+    </div>
+</body>
+
+<script>
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function searchAlbums() {
+    // Get the search query
+    var query = document.getElementById('albumSearch').value;
+
+    // Send a request to the server
+    fetch(`search-albums/?query=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            // Get the grid element
+            var grid = document.getElementById('albums-grid');
+
+            // Clear the grid
+            grid.innerHTML = '';
+
+            // Loop through all albums and create new elements for each one
+            for (var i = 0; i < data.length; i++) {
+                var album = data[i];
+
+                console.log(album)
+                // Create new album element
+                var albumElement = document.createElement('div');
+                albumElement.className = 'bg-white rounded-lg shadow-md';
+                albumElement.innerHTML = `
+                <img src="${album.cover_image}" alt="${album.name}" class="h-128 w-full rounded-t-lg object-cover">
+                    <h2 class="text-xl title">${album.name}</h2>
+                    <p>${album.description}</p>
+                    <a href="albums/${album.slug}/" class="mt-2 inline-block bg-purple-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">View Album</a>
+
+                `;
+
+                // Add new album element to the grid
+                grid.appendChild(albumElement);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+window.onload = searchAlbums
+</script>
+{% endblock content %}
