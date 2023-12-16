@@ -257,6 +257,29 @@ def delete_review(request, item_id):
     return HttpResponseNotFound()
 
 @csrf_exempt
+def delete_review_flutter(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            review = Review.objects.get(pk=int(data["reviewID"]))
+            book = get_object_or_404(Book, review=review)  # Use get_object_or_404 to get the book
+            # Now, you have the review associated with the book, and you can perform your operations
+            if book.numRatings - 1 == 0:
+                book.rating = 0
+            else:
+                book.rating = (book.rating * book.numRatings - review.stars) / (book.numRatings - 1)
+                book.rating = round(book.rating, 1)
+
+            book.numRatings -= 1
+            book.save()
+            review.delete()
+            return JsonResponse({"status": "success"}, status=200)
+        except Review.DoesNotExist:
+            return JsonResponse({"status": "error"}, status=401)
+
+    return HttpResponseNotFound()
+
+@csrf_exempt
 def create_review_flutter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
