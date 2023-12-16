@@ -98,38 +98,44 @@ def update_bio(request):
         return JsonResponse({'success': True, 'new_bio': new_bio})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
-    
-# @csrf_exempt
-# def complete_profile_flutter(request):
-#     if request.method == 'POST':
-#         data = json.loads(request.body)
-#         auth_user = User.objects.get(username=data["username"])
-#         name = data["name"]
-#         bio = data["bio"]
-#         email = data["email"]
-#         handphone = data["handphone"]
-#         address = data["address"]
 
-#         new_profile = ProfileUser(user=auth_user, name=name, bio=bio, email=email, handphone=handphone, address=address)
-#         new_profile.save()
+@csrf_exempt
+def get_profile_user(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
 
-#         return JsonResponse({"status": "success"}, status=200)
-#     else:
-#         return JsonResponse({"status": "error"}, status=401)
+        auth_user = User.objects.get(username=data["user"])
+        profile_user = ProfileUser.objects.get(user=auth_user)
 
+        profile_dict = {
+            "name": profile_user.name,
+            "avatar": profile_user.avatar,
+            "bio": profile_user.bio,
+            "email": profile_user.email,
+            "handphone": profile_user.handphone,
+            "address": profile_user.address,
+        }
+
+        return JsonResponse(profile_dict, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
 def complete_profile_flutter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        user = request.user
 
-        profile_user = user.profileuser
+        auth_user = User.objects.get(username=data["username"])
+        profile_user = ProfileUser.objects.get(user=auth_user)
 
-        profile_user.name = data.get("name", profile_user.name)
-        profile_user.avatar = data.get("avatar", profile_user.avatar)
-        profile_user.bio = data.get("bio", profile_user.bio)
-        profile_user.email = data.get("email", profile_user.email)
-        profile_user.handphone = data.get("handphone", profile_user.handphone)
-        profile_user.address = data.get("address", profile_user.address)
+        profile_user.name = data["name"]
+        profile_user.avatar = data["avatar"]
+        profile_user.bio = data["bio"]
+        profile_user.email = data["email"]
+        profile_user.handphone = data["handphone"]
+        profile_user.address = data["address"]
+
+        print(profile_user.name)
 
         profile_user.save()
 

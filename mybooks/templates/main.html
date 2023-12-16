@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+  <title>
+    Home
+  </title>
+{% endblock meta %}
+
+{% block content %}
+  <head>
+    <style>
+      .image-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-gap: 20px;
+        max-width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="bg-putih">
+      <h1 class="pt-6 pb-6 text-center text-2xl font-bold font-serif">Beikut adalah daftar buku anda!</h1>
+      
+
+      <div id="book_cards" class="image-container pt-6 pb-6 pr-6 pl-6 w-95 rounded-2xl"></div>
+
+
+
+    </div>
+
+  </body>
+
+  <script>
+    async function getBooks() {
+      return fetch("{% url 'mybooks:get_books' %}").then((res) => res.json())
+    }
+
+    async function refreshBooks() {
+      document.getElementById("book_cards").innerHTML = "";
+      const products = await getBooks();
+
+      let htmlString = "";
+      
+      products.forEach((item) => {
+        htmlString = `
+          <div class="card bg-cream-muda rounded-lg cursor-pointer">
+            <div class="card-body flex flex-col items-center">
+              <a href="/book-detail/${item.pk}">
+                <img class="card-img-top w-full cursor-pointer" id="clickable-image-${item.pk}" src="${item.fields.coverImg}" alt="${item.fields.title}">
+                <h5 class="card-title font-bold text-lg mt-3 text-center">${item.fields.title}</h5>
+              </a>
+            </div>
+          </div>`;
+        document.getElementById("book_cards").innerHTML += htmlString;
+      });
+
+      products.forEach((item) => {
+        const reviewUrl = `/book-detail/${item.pk}`; // call it here
+        const idName = `clickable-image-${item.pk}`;
+        const element = document.getElementById(idName);
+        element.addEventListener('click', function() {
+          window.location.href = reviewUrl;
+        });
+
+      });
+    }
+    refreshBooks();
+
+    function searchBooks() {
+      const searchInput = document.getElementById("search-input").value.toLowerCase();
+
+      const cards = document.getElementsByClassName("card");
+      for (const card of cards) {
+        const title = card.querySelector(".card-title").textContent.toLowerCase();
+        if (title.includes(searchInput)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      }
+    }
+
+    function addBook() {
+      fetch("{% url 'homepage:add_book_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.querySelector('#form'))
+      }).then(refreshProducts)
+
+      document.getElementById("form").reset()
+      return false
+    }
+
+    document.getElementById("button_add").onclick = addBook
+
+  </script>
+{% endblock content %}

@@ -12,4 +12,5 @@ urlpatterns = [
     path('complete-profile-flutter/', complete_profile_flutter),
     path('edit-profile-flutter/', update_profile_flutter),
     path('get-books-liked-by-user-flutter/', get_books_liked_by_user_flutter),
+    path('get-profile-user/', get_profile_user)
 ]
