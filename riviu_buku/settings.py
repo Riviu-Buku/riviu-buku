@@ -18,6 +18,11 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 
+#Cloudinary imports
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -45,8 +50,10 @@ INSTALLED_APPS = [
     'myprofile',
     'album',
     'upload_buku',
+    'mybooks',
     'authentication',
     'corsheaders',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -162,3 +169,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Cloudinary - Django integration
+
+cloudinary.config(
+    cloud_name = "dcf91ipuo",
+    api_key = "596658713131867",
+    api_secret = "Q55ZHrDO4WLNjFUx8e3Ayz2BbkI",
+)
