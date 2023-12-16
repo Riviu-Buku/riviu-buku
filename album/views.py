@@ -193,6 +193,10 @@ def get_book_json(request):
     book_item = Book.objects.all
     return HttpResponse(serializers.serialize('json', book_item))
 
+def get_album_json(request):
+    album_item = Album.objects.all()
+    return HttpResponse(serializers.serialize("json", album_item), content_type="application/json")
+
 def view_lists(request):
     lists = Album.objects.all()
     return render(request, 'lists.html', {'lists': lists})
