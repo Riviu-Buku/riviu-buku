@@ -28,7 +28,8 @@ urlpatterns = [
     path('profile/', include('myprofile.urls')),
     path('album/', include('album.urls')),
     path('upload/', include('upload_buku.urls')),
-    path('auth/', include('authentication.urls'))
+    path('auth/', include('authentication.urls')),
+    path('mybooks/', include('mybooks.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

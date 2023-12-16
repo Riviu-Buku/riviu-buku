@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from review.models import Review
-
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 class Book(models.Model):
@@ -21,8 +21,9 @@ class Book(models.Model):
     awards = models.JSONField(null=True, blank=True)
     numRatings = models.IntegerField(null=True, blank=True)
     numLikes = models.IntegerField(null=True, blank=True)
-    coverImg = models.URLField(null=True, blank=True)
+    coverImg = models.URLField(null=True, blank=True, default="https://res.cloudinary.com/dcf91ipuo/image/upload/v1702620170/defaultCoverImg_pvks08.jpg")
     review = models.ManyToManyField(Review)
+    user = user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     liked_by_users = models.ManyToManyField(User, related_name="liked_books", blank=True)
     
