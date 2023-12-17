@@ -9,6 +9,34 @@ from django.contrib.auth.models import User
 @csrf_exempt
 def login_custom(request):
     data = json.loads(request.body)
+    username = data['username']
+    password = data['password']
+    user = authenticate(username=username, password=password)
+    print("hello")
+    print(password)
+    print(username)
+    if user is not None:
+        if user.is_active:
+            auth_login(request, user)
+            # Status login sukses.
+            # return JsonResponse({
+            #     "username": user.username,
+            #     "status": True,
+            #     "message": "Login sukses!",
+            #     "id" : user.id
+            #     # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
+            # }, status=200)
+        else:
+            return JsonResponse({
+                "status": False,
+                "message": "Login gagal, akun dinonaktifkan."
+            }, status=401)
+    else:
+        return JsonResponse({
+            "status": False,
+            "message": "Login gagal, periksa kembali email atau kata sandi."
+        }, status=401)
+        
     auth_user = User.objects.get(username= data['username'])
     if auth_user is None:
         return JsonResponse({
