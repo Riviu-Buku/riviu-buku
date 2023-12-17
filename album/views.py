@@ -11,7 +11,9 @@ from album.models import Album
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Album
 from .forms import AlbumForm
-
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def show_albums(request):
@@ -204,3 +206,40 @@ def view_lists(request):
 def view_list(request, slug):
     list = get_object_or_404(Album, slug=slug)
     return render(request, 'list.html', {'list': list})
+
+@csrf_exempt
+def create_album_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = data.get('name')
+        description = data.get('description')
+        book_ids = data.get('books')  # This should be a list of book IDs
+        auth_user = User.objects.get(username= data["user"])
+
+        if not name:
+            return JsonResponse({'error': 'Name is required'}, status=400)
+
+        # Create a new album object
+        album = Album(name=name, description=description, user=auth_user)
+
+        # Generate a unique slug
+        slug = slugify(name)
+        unique_slug = slug
+        num = 1
+        while Album.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        album.slug = unique_slug
+
+        album.save()
+
+        # Add the selected books to the album
+        books = Book.objects.filter(id__in=book_ids)
+        album.books.set(books)
+
+        album.save()
+
+        return JsonResponse({'message': 'Album created successfully', 'slug': album.slug}, status=201)
+
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)

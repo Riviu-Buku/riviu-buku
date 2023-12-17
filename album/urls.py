@@ -13,5 +13,6 @@ urlpatterns = [
     path('album/<slug:slug>/remove-book/', remove_book_from_album, name='remove_book_from_album'),
     path('delete-album/<slug:slug>/', delete_album, name='delete_album'),
     path('search-albums/', search_albums, name='search_album'),
-    path('json/', get_album_json, name='get_album_json')
+    path('json/', get_album_json, name='get_album_json'),
+    path('create-album-flutter/', create_album_flutter, name='create_album_flutter')
 ]
