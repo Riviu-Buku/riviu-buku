@@ -9,8 +9,8 @@ urlpatterns = [
     path('edit/', update_profile, name='update_profile'),
     path('update-bio/', update_bio, name='update_bio'),
     path('toggle-unlike-book/<int:book_id>/', toggle_unlike_book, name='toggle_unlike_book'),
-    path('complete-profile-flutter/', complete_profile_flutter),
-    path('edit-profile-flutter/', update_profile_flutter),
+    path('complete-profile-flutter/<int:id>/', complete_profile_flutter),
+    path('get-profile-other-user/', get_profile_other_user),
     path('get-books-liked-by-user-flutter/', get_books_liked_by_user_flutter),
-    path('get-profile-user/', get_profile_user)
+    path('get-profile-user/<int:id>', get_profile_user)
 ]

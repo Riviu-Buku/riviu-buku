@@ -100,7 +100,27 @@ def update_bio(request):
         return JsonResponse({'success': False, 'error': str(e)})
 
 @csrf_exempt
-def get_profile_user(request):
+def get_profile_user(request, id):
+    if request.method == 'GET':
+
+        auth_user = User.objects.get(pk=id)
+        profile_user = ProfileUser.objects.get(user=auth_user)
+
+        profile_dict = {
+            "name": profile_user.name,
+            "avatar": profile_user.avatar,
+            "bio": profile_user.bio,
+            "email": profile_user.email,
+            "handphone": profile_user.handphone,
+            "address": profile_user.address,
+        }
+
+        return JsonResponse(profile_dict, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def get_profile_other_user(request):
     if request.method == 'POST':
         data = json.loads(request.body)
 
@@ -121,11 +141,11 @@ def get_profile_user(request):
         return JsonResponse({"status": "error"}, status=401)
 
 @csrf_exempt
-def complete_profile_flutter(request):
+def complete_profile_flutter(request, id):
     if request.method == 'POST':
         data = json.loads(request.body)
 
-        auth_user = User.objects.get(username=data["username"])
+        auth_user = User.objects.get(pk=id)
         profile_user = ProfileUser.objects.get(user=auth_user)
 
         profile_user.name = data["name"]
@@ -135,38 +155,11 @@ def complete_profile_flutter(request):
         profile_user.handphone = data["handphone"]
         profile_user.address = data["address"]
 
-        print(profile_user.name)
-
         profile_user.save()
 
         return JsonResponse({"status": "success"}, status=200)
     else:
         return JsonResponse({"status": "error"}, status=401)
-
-    
-@csrf_exempt 
-def update_profile_flutter(request): #belum kepake
-    user = request.user
-    try:
-        profile = ProfileUser.objects.get(user=user)
-    except ProfileUser.DoesNotExist:
-        profile = None
-
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        form = ProfileForm(data, instance=profile)
-
-        if form.is_valid():
-            updated_profile = form.save(commit=False)
-            updated_profile.user = user
-            updated_profile.save()
-            messages.success(request, 'Your profile details have been successfully updated!')
-            return JsonResponse({"status": "success"}, status=200)
-        else:
-            return JsonResponse({"status": "error", "errors": form.errors}, status=400)
-
-    else:
-        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
     
 @csrf_exempt
 def get_books_liked_by_user_flutter(request):

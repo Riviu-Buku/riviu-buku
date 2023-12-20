@@ -11,7 +11,9 @@ from album.models import Album
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Album
 from .forms import AlbumForm
-
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def show_albums(request):
@@ -103,51 +105,6 @@ def edit_album(request, slug):
     else:
         return render(request, 'edit_album.html', {'album': album, 'books': books, 'book_ids': book_ids})
 
-
-def update_album(request, slug):
-    # Get the album
-    album = get_object_or_404(Album, slug=slug)
-
-    # Check if this is a POST request
-    if request.method == 'POST':
-        # Get the new name and description from the POST data
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-
-        # Update the album's name and description
-        album.name = name
-        album.description = description
-
-        # Get the selected books from the POST data
-        book_ids = request.POST.getlist('books')  # This should be a list of book IDs
-
-        if 'removedBooks' in request.POST:
-            # Get the IDs of the books to be removed
-            removed_book_ids = request.POST.getlist('removedBooks')
-
-            # Get the book objects
-            removed_books = Book.objects.filter(id__in=removed_book_ids)
-
-            # Remove the books from the album
-            for book in removed_books:
-                album.books.remove(book)
-
-        # Clear the existing books
-        album.books.clear()
-
-        # Add the selected books to the album
-        books = Book.objects.filter(id__in=book_ids)
-        album.books.set(books)
-
-        # Save the album
-        album.save()
-
-        return redirect('album:show_album', slug=album.slug)
-
-    else:
-        return render(request, 'edit_album.html', {'album': album})
-
-
 def add_book_to_album(request):
     album_id = request.GET.get('album_id')
     book_id = request.GET.get('book_id')
@@ -193,6 +150,10 @@ def get_book_json(request):
     book_item = Book.objects.all
     return HttpResponse(serializers.serialize('json', book_item))
 
+def get_album_json(request):
+    album_item = Album.objects.all()
+    return HttpResponse(serializers.serialize("json", album_item), content_type="application/json")
+
 def view_lists(request):
     lists = Album.objects.all()
     return render(request, 'lists.html', {'lists': lists})
@@ -200,3 +161,88 @@ def view_lists(request):
 def view_list(request, slug):
     list = get_object_or_404(Album, slug=slug)
     return render(request, 'list.html', {'list': list})
+
+from django.http import JsonResponse
+from django.core.serializers import serialize
+
+# ... (existing imports)
+
+@csrf_exempt
+def create_album_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = data.get('name')
+        description = data.get('description')
+        book_ids = data.get('books')  # This should be a list of book IDs
+        auth_user = User.objects.get(username=data["user"])
+
+        if not name:
+            return JsonResponse({'error': 'Name is required'}, status=400)
+
+        # Create a new album object
+        album = Album(name=name, description=description, user=auth_user)
+
+        # Generate a unique slug
+        slug = slugify(name)
+        unique_slug = slug
+        num = 1
+        while Album.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        album.slug = unique_slug
+
+        album.save()
+
+        # Add the selected books to the album
+        books = Book.objects.filter(id__in=book_ids)
+        album.books.set(books)
+
+        album.save()
+
+        # Return the JSON representation of the created album
+        serialized_album = serialize('json', [album])
+        return JsonResponse({'message': 'Album created successfully', 'album': serialized_album}, status=201)
+
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def edit_album_flutter(request, slug):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = data.get('name')
+        description = data.get('description')
+        book_ids = data.get('books')  # This should be a list of book IDs
+        pk = data.get('pk')
+
+        if not name:
+            return JsonResponse({'error': 'Name is required'}, status=400)
+        elif not description:
+            return JsonResponse({'error': 'Description is required'}, status=400)
+
+        album = Album.objects.get(pk=pk)
+
+        # Update the album object
+        album.name = name
+        album.description = description
+
+        # Update the selected books in the album
+        books = Book.objects.filter(id__in=book_ids)
+        album.books.set(books)
+
+        album.save()
+
+        return JsonResponse({'message': 'Album updated successfully', 'slug': album.slug}, status=200)
+
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def delete_album_flutter(request, slug):
+    if request.method == 'DELETE':
+        album = get_object_or_404(Album, slug=slug)
+        album.delete()
+        return JsonResponse({'message': 'Album deleted successfully'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
