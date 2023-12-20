@@ -30,6 +30,13 @@ class Book(models.Model):
     def __str__(self):
         return self.title
     
+class RecommendedBook(models.Model):
+    title = models.TextField(null=True, blank=True)
+    author = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return self.title
+    
 class FavoriteBook(models.Model):
     title = models.TextField(null=True, blank=True)
     author = models.TextField(null=True, blank=True)
