@@ -13,4 +13,6 @@ urlpatterns = [
     path('xml/<int:id>/', show_xml_by_id, name='show_xml_by_id'),
     path('json/<int:id>/', show_json_by_id, name='show_json_by_id'), 
     path('create-flutter/', create_product_flutter, name='create_product_flutter'),
+    path('add_recommended_book_flutter/', add_recommended_book_flutter, name='add_recommended_book_flutter'),
+    path('show_recommended_book_json/', show_recommended_book_json, name='show_recommended_book_json'), 
 ]

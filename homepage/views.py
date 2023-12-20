@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
-from homepage.models import Book, FavoriteBook
+from homepage.models import Book, FavoriteBook, RecommendedBook
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -71,3 +71,24 @@ def create_product_flutter(request):
         return JsonResponse({"status": "success"}, status=200)
     else:
         return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def add_recommended_book_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        new_book = RecommendedBook.objects.create(
+            #user=data['user'],
+            title=data['title'],
+            author=data['author'],
+        )
+        new_book.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+def show_recommended_book_json(request):
+    data = RecommendedBook.objects.all()
+    #data=data[50:51]
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
