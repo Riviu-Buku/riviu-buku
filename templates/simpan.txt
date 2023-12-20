@@ -1,0 +1,15 @@
+<!-- {% if user_type == 'bumil' %}
+      <div class="md:mx-5 my-3 md:my-0">
+        <a href="#" class="hover:text-cream-tua hover:text-lg  duration-500">Catat</a>
+      </div>
+      <div class="md:mx-5 my-3 md:my-0">
+        <a href="#" class="hover:text-cream-tua hover:text-lg  duration-500">Diary</a>
+      </div>
+      {% endif %}
+      <div class="md:ml-5 p-5 bg-merah-tua rounded-lg w-fit text-white text-base py-2 my-3 md:my-0">
+        {% if user.is_authenticated %}
+        <button><a href="{% url 'login:logout_user' %}" class="hover:text-cream-tua">Logout</a></button>
+        {% else %}
+        <button><a href="{% url 'login:login_user' %}" class="hover:text-cream-tua">Login</a></button>
+        {% endif %}
+      </div> -->
