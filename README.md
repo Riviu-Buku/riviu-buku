@@ -14,7 +14,7 @@
     <a href="https://github.com/Riviu-Buku/riviu-buku"><strong>Explore the code »</strong> </a>
     <br />
     <br />
-    <a href="http://samuel-taniel-tutorial.pbp.cs.ui.ac.id">View Site</a>
+    <a href="https://riviu-buku-d07-tk.pbp.cs.ui.ac.id/">View Site</a>
     ·
     <a href="https://pbp-fasilkom-ui.github.io/ganjil-2024/assignments/group/midterm"> View Assignment </a>
   </p>
